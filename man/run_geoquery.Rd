@@ -10,7 +10,8 @@ run_geoquery(
   unify_by_grain = TRUE,
   fact = NULL,
   dimension = NULL,
-  attribute = NULL
+  attribute = NULL,
+  wider = FALSE
 )
 
 \method{run_geoquery}{dimensional_query}(
@@ -18,7 +19,8 @@ run_geoquery(
   unify_by_grain = TRUE,
   fact = NULL,
   dimension = NULL,
-  attribute = NULL
+  attribute = NULL,
+  wider = FALSE
 )
 }
 \arguments{
@@ -31,6 +33,8 @@ run_geoquery(
 \item{dimension}{A string, name of the geographic dimension.}
 
 \item{attribute}{A string, name of the geographic attribute to consider.}
+
+\item{wider}{A boolean, avoid repeating geographic data.}
 }
 \value{
 A \code{sf} object.
@@ -50,6 +54,11 @@ there is only one available.
 
 If no attribute is specified, the geographic attribute of the result with
 finer granularity is selected.
+
+In geographic layers, geographic objects are not repeated. The tables are
+wide: for each object the rest of the attributes are defined as columns. By
+means of the parameter \code{wider} we can indicate that we want a result of this
+type.
 }
 \examples{
 library(tidyr)
@@ -88,6 +97,9 @@ gdq <- dimensional_query(gms) \%>\%
 
 sf <- gdq \%>\%
   run_geoquery()
+
+sfw <- gdq \%>\%
+  run_geoquery(wider = TRUE)
 
 }
 \seealso{

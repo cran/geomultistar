@@ -104,7 +104,7 @@ pander::pandoc.table(empty_county, split.table = Inf)
 ## -----------------------------------------------------------------------------
 gms <- gms %>%
   define_geoattribute(
-    attribute = c("state", "state_name"),
+    attribute = c("state"),
     from_layer = usa_states,
     by = c("state" = "state")
   ) 
@@ -155,4 +155,17 @@ pander::pandoc.table(head(vl_sf, 12), split.table = Inf)
 class(vl_sf)
 
 plot(vl_sf[,"n_deaths"])
+
+## -----------------------------------------------------------------------------
+vl_sf_w <- gdqr %>%
+  run_geoquery(wider = TRUE)
+
+## ---- results = "asis", echo = FALSE------------------------------------------
+pander::pandoc.table(head(vl_sf_w$sf, 12), split.table = Inf)
+
+## ---- results = "asis", echo = FALSE------------------------------------------
+pander::pandoc.table(head(vl_sf_w$variables, 12), split.table = Inf)
+
+## ---- eval = FALSE------------------------------------------------------------
+#  save_as_geopackage(vl_sf_w, "division")
 
