@@ -13,46 +13,43 @@
 #' @export
 #'
 #' @examples
-#' library(tidyr)
 #' library(starschemar)
-#' library(sf)
 #'
-#' gms <- geomultistar(ms = ms_mrs, geodimension = "where") %>%
+#' gms <- geomultistar(ms = ms_mrs, geodimension = "where") |>
 #'   define_geoattribute(
 #'     attribute = "city",
 #'     from_layer = usa_cities,
 #'     by = c("city" = "city", "state" = "state")
-#'   )  %>%
+#'   )  |>
 #'   define_geoattribute(
 #'     attribute = "state",
 #'     from_layer = usa_states,
 #'     by = c("state" = "state")
-#'   ) %>%
+#'   ) |>
 #'   define_geoattribute(attribute = "region",
-#'                       from_attribute = "state") %>%
+#'                       from_attribute = "state") |>
 #'   define_geoattribute(attribute = "all_where",
 #'                       from_layer = usa_nation)
 #'
-#' gdq <- dimensional_query(gms) %>%
+#' gdq <- dimensional_query(gms) |>
 #'   select_dimension(name = "where",
-#'                    attributes = c("state", "city")) %>%
+#'                    attributes = c("state", "city")) |>
 #'   select_dimension(name = "when",
-#'                    attributes = c("when_happened_year", "when_happened_week")) %>%
+#'                    attributes = c("when_happened_year", "when_happened_week")) |>
 #'   select_fact(
 #'     name = "mrs_age",
 #'     measures = c("n_deaths")
-#'   ) %>%
+#'   ) |>
 #'   select_fact(name = "mrs_cause",
-#'               measures = c("pneumonia_and_influenza_deaths", "other_deaths")) %>%
-#'   filter_dimension(name = "when", when_happened_week <= "03") %>%
+#'               measures = c("pneumonia_and_influenza_deaths", "other_deaths")) |>
+#'   filter_dimension(name = "when", when_happened_week <= "03") |>
 #'   filter_dimension(name = "where", state == "MA")
 #'
-#' sf <- gdq %>%
+#' sf <- gdq |>
 #'   run_geoquery(wider = TRUE)
-#'
-#' \dontrun{
-#' save_as_geopackage(sf, "city")
-#' }
+#'\donttest{
+#' save_as_geopackage(sf, "city", filepath = tempdir())
+#'}
 save_as_geopackage <- function(sf, layer_name, file_name = NULL, filepath = NULL) {
   if (is.null(file_name)) {
     file_name <- layer_name

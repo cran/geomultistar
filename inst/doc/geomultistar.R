@@ -1,4 +1,4 @@
-## ---- include = FALSE---------------------------------------------------------
+## ----include = FALSE----------------------------------------------------------
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
@@ -8,10 +8,7 @@ knitr::opts_chunk$set(
 library(geomultistar)
 
 ## -----------------------------------------------------------------------------
-library(tidyr)
-library(geomultistar)
-
-ms <- multistar() %>%
+ms <- multistar() |>
   add_facts(
     fact_name = "mrs_age",
     fact_table = mrs_fact_age,
@@ -20,7 +17,7 @@ ms <- multistar() %>%
   ) 
 
 ## -----------------------------------------------------------------------------
-ms <- ms %>%
+ms <- ms |>
   add_facts(
     fact_name = "mrs_cause",
     fact_table = mrs_fact_cause,
@@ -29,7 +26,7 @@ ms <- ms %>%
   )
 
 ## -----------------------------------------------------------------------------
-ms <- ms %>%
+ms <- ms |>
   add_dimension(
     dimension_name = "where",
     dimension_table = mrs_where,
@@ -39,7 +36,7 @@ ms <- ms %>%
   )
 
 ## -----------------------------------------------------------------------------
-ms <- ms %>%
+ms <- ms |>
   add_dimension(
     dimension_name = "when",
     dimension_table = mrs_when,
@@ -47,7 +44,7 @@ ms <- ms %>%
     fact_name = "mrs_age",
     fact_key = "when_fk",
     key_as_data = TRUE
-  ) %>%
+  ) |>
   add_dimension(
     dimension_name = "who",
     dimension_table = mrs_who,
@@ -57,22 +54,20 @@ ms <- ms %>%
   )
 
 ## -----------------------------------------------------------------------------
-ms <- ms %>%
+ms <- ms |>
   relate_dimension(dimension_name = "where",
                    fact_name = "mrs_cause",
-                   fact_key = "where_fk") %>%
+                   fact_key = "where_fk") |>
   relate_dimension(dimension_name = "when",
                    fact_name = "mrs_cause",
                    fact_key = "when_fk")
 
 ## -----------------------------------------------------------------------------
-library(sf)
-
 gms <-
   geomultistar(ms, geodimension = "where")
 
 ## -----------------------------------------------------------------------------
-gms <- gms %>%
+gms <- gms |>
   define_geoattribute(
     attribute = "city",
     from_layer = usa_cities,
@@ -80,14 +75,14 @@ gms <- gms %>%
   ) 
 
 ## -----------------------------------------------------------------------------
-empty_city <- gms %>%
+empty_city <- gms |>
   get_empty_geoinstances(attribute = "city")
 
-## ---- results = "asis", echo = FALSE------------------------------------------
+## ----results = "asis", echo = FALSE-------------------------------------------
 pander::pandoc.table(empty_city, split.table = Inf)
 
 ## -----------------------------------------------------------------------------
-gms <- gms %>%
+gms <- gms |>
   define_geoattribute(
     attribute = "county",
     from_layer = usa_counties,
@@ -95,14 +90,14 @@ gms <- gms %>%
   )  
 
 ## -----------------------------------------------------------------------------
-empty_county <- gms %>%
+empty_county <- gms |>
   get_empty_geoinstances(attribute = "county")
 
-## ---- results = "asis", echo = FALSE------------------------------------------
+## ----results = "asis", echo = FALSE-------------------------------------------
 pander::pandoc.table(empty_county, split.table = Inf)
 
 ## -----------------------------------------------------------------------------
-gms <- gms %>%
+gms <- gms |>
   define_geoattribute(
     attribute = c("state"),
     from_layer = usa_states,
@@ -110,45 +105,45 @@ gms <- gms %>%
   ) 
 
 ## -----------------------------------------------------------------------------
-gms <- gms %>%
+gms <- gms |>
   define_geoattribute(
     attribute = "division",
     from_attribute = "state"
   ) 
 
 ## -----------------------------------------------------------------------------
-gms <- gms %>%
+gms <- gms |>
   define_geoattribute(from_attribute = "state")
 
 ## -----------------------------------------------------------------------------
 library(starschemar)
 
-gdqr <- dimensional_query(gms) %>%
+gdqr <- dimensional_query(gms) |>
   select_dimension(name = "where",
-                   attributes = c("division_name", "region_name")) %>%
+                   attributes = c("division_name", "region_name")) |>
   select_dimension(name = "when",
-                   attributes = c("year", "week")) %>%
+                   attributes = c("year", "week")) |>
   select_fact(name = "mrs_age",
-              measures = c("n_deaths")) %>%
+              measures = c("n_deaths")) |>
   select_fact(
     name = "mrs_cause",
     measures = c("pneumonia_and_influenza_deaths", "other_deaths")
-  ) %>%
+  ) |>
   filter_dimension(name = "when", week <= "03")
 
 ## -----------------------------------------------------------------------------
-ft <- gdqr %>%
-  run_query() %>%
+ft <- gdqr |>
+  run_query() |>
   multistar_as_flat_table()
 
-## ---- results = "asis", echo = FALSE------------------------------------------
+## ----results = "asis", echo = FALSE-------------------------------------------
 pander::pandoc.table(head(ft, 12), split.table = Inf)
 
 ## -----------------------------------------------------------------------------
-vl_sf <- gdqr %>%
+vl_sf <- gdqr |>
   run_geoquery()
 
-## ---- results = "asis", echo = FALSE------------------------------------------
+## ----results = "asis", echo = FALSE-------------------------------------------
 pander::pandoc.table(head(vl_sf, 12), split.table = Inf)
 
 ## -----------------------------------------------------------------------------
@@ -157,15 +152,15 @@ class(vl_sf)
 plot(vl_sf[,"n_deaths"])
 
 ## -----------------------------------------------------------------------------
-vl_sf_w <- gdqr %>%
+vl_sf_w <- gdqr |>
   run_geoquery(wider = TRUE)
 
-## ---- results = "asis", echo = FALSE------------------------------------------
+## ----results = "asis", echo = FALSE-------------------------------------------
 pander::pandoc.table(head(vl_sf_w$sf, 12), split.table = Inf)
 
-## ---- results = "asis", echo = FALSE------------------------------------------
+## ----results = "asis", echo = FALSE-------------------------------------------
 pander::pandoc.table(head(vl_sf_w$variables, 12), split.table = Inf)
 
-## ---- eval = FALSE------------------------------------------------------------
+## ----eval = FALSE-------------------------------------------------------------
 #  save_as_geopackage(vl_sf_w, "division")
 

@@ -14,140 +14,105 @@
 
 <meta name="date" content="2020-09-15" />
 
-<title>geomultistar: Geographical Queries on Multidimensional Data</title>
+<title>Geographical Queries on Multidimensional Data</title>
 
-<script>// Hide empty <a> tag within highlighted CodeBlock for screen reader accessibility (see https://github.com/jgm/pandoc/issues/6352#issuecomment-626106786) -->
-// v0.0.1
-// Written by JooYoung Seo (jooyoung@psu.edu) and Atsushi Yasumoto on June 1st, 2020.
-
-document.addEventListener('DOMContentLoaded', function() {
-  const codeList = document.getElementsByClassName("sourceCode");
-  for (var i = 0; i < codeList.length; i++) {
-    var linkList = codeList[i].getElementsByTagName('a');
-    for (var j = 0; j < linkList.length; j++) {
-      if (linkList[j].innerHTML === "") {
-        linkList[j].setAttribute('aria-hidden', 'true');
-      }
-    }
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
   }
 });
 </script>
+
 <style type="text/css">
-a.anchor-section {margin-left: 10px; visibility: hidden; color: inherit;}
-a.anchor-section::before {content: '#';}
-.hasAnchor:hover a.anchor-section {visibility: visible;}
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
 </style>
-<script>// Anchor sections v1.0 written by Atsushi Yasumoto on Oct 3rd, 2020.
-document.addEventListener('DOMContentLoaded', function() {
-  // Do nothing if AnchorJS is used
-  if (typeof window.anchors === 'object' && anchors.hasOwnProperty('hasAnchorJSLink')) {
-    return;
-  }
 
-  const h = document.querySelectorAll('h1, h2, h3, h4, h5, h6');
 
-  // Do nothing if sections are already anchored
-  if (Array.from(h).some(x => x.classList.contains('hasAnchor'))) {
-    return null;
-  }
-
-  // Use section id when pandoc runs with --section-divs
-  const section_id = function(x) {
-    return ((x.classList.contains('section') || (x.tagName === 'SECTION'))
-            ? x.id : '');
-  };
-
-  // Add anchors
-  h.forEach(function(x) {
-    const id = x.id || section_id(x.parentElement);
-    if (id === '') {
-      return null;
-    }
-    let anchor = document.createElement('a');
-    anchor.href = '#' + id;
-    anchor.classList = ['anchor-section'];
-    x.classList.add('hasAnchor');
-    x.appendChild(anchor);
-  });
-});
-</script>
 
 <style type="text/css">
-  code{white-space: pre-wrap;}
-  span.smallcaps{font-variant: small-caps;}
-  span.underline{text-decoration: underline;}
-  div.column{display: inline-block; vertical-align: top; width: 50%;}
-  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
-  ul.task-list{list-style: none;}
-    </style>
-
-
-<style type="text/css">code{white-space: pre;}</style>
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
 <style type="text/css" data-origin="pandoc">
-code.sourceCode > span { display: inline-block; line-height: 1.25; }
-code.sourceCode > span { color: inherit; text-decoration: inherit; }
-code.sourceCode > span:empty { height: 1.2em; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
-code.sourceCode { white-space: pre; position: relative; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
 div.sourceCode { margin: 1em 0; }
 pre.sourceCode { margin: 0; }
 @media screen {
 div.sourceCode { overflow: auto; }
 }
 @media print {
-code.sourceCode { white-space: pre-wrap; }
-code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
 }
 pre.numberSource code
-  { counter-reset: source-line 0; }
+{ counter-reset: source-line 0; }
 pre.numberSource code > span
-  { position: relative; left: -4em; counter-increment: source-line; }
+{ position: relative; left: -4em; counter-increment: source-line; }
 pre.numberSource code > span > a:first-child::before
-  { content: counter(source-line);
-    position: relative; left: -1em; text-align: right; vertical-align: baseline;
-    border: none; display: inline-block;
-    -webkit-touch-callout: none; -webkit-user-select: none;
-    -khtml-user-select: none; -moz-user-select: none;
-    -ms-user-select: none; user-select: none;
-    padding: 0 4px; width: 4em;
-    color: #aaaaaa;
-  }
-pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
-div.sourceCode
-  {   }
-@media screen {
-code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
 }
-code span.al { color: #ff0000; font-weight: bold; } /* Alert */
-code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
-code span.at { color: #7d9029; } /* Attribute */
-code span.bn { color: #40a070; } /* BaseN */
-code span.bu { } /* BuiltIn */
-code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
-code span.ch { color: #4070a0; } /* Char */
-code span.cn { color: #880000; } /* Constant */
-code span.co { color: #60a0b0; font-style: italic; } /* Comment */
-code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
-code span.do { color: #ba2121; font-style: italic; } /* Documentation */
-code span.dt { color: #902000; } /* DataType */
-code span.dv { color: #40a070; } /* DecVal */
-code span.er { color: #ff0000; font-weight: bold; } /* Error */
-code span.ex { } /* Extension */
-code span.fl { color: #40a070; } /* Float */
-code span.fu { color: #06287e; } /* Function */
-code span.im { } /* Import */
-code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
-code span.kw { color: #007020; font-weight: bold; } /* Keyword */
-code span.op { color: #666666; } /* Operator */
-code span.ot { color: #007020; } /* Other */
-code span.pp { color: #bc7a00; } /* Preprocessor */
-code span.sc { color: #4070a0; } /* SpecialChar */
-code span.ss { color: #bb6688; } /* SpecialString */
-code span.st { color: #4070a0; } /* String */
-code span.va { color: #19177c; } /* Variable */
-code span.vs { color: #4070a0; } /* VerbatimString */
-code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
-
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
 </style>
 <script>
 // apply pandoc div.sourceCode style to pre.sourceCode instead
@@ -156,13 +121,20 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   for (var i = 0; i < sheets.length; i++) {
     if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
     try { var rules = sheets[i].cssRules; } catch (e) { continue; }
-    for (var j = 0; j < rules.length; j++) {
+    var j = 0;
+    while (j < rules.length) {
       var rule = rules[j];
       // check if there is a div.sourceCode rule
-      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
       var style = rule.style.cssText;
       // check if color or background-color is set
-      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
       // replace div.sourceCode by a pre.sourceCode rule
       sheets[i].deleteRule(j);
       sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
@@ -170,6 +142,7 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
   }
 })();
 </script>
+
 
 
 
@@ -365,7 +338,8 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 
 
-<h1 class="title toc-ignore">geomultistar: Geographical Queries on Multidimensional Data</h1>
+<h1 class="title toc-ignore">Geographical Queries on Multidimensional
+Data</h1>
 <h4 class="author">Jose Samos (<a href="mailto:jsamos@ugr.es" class="email">jsamos@ugr.es</a>)</h4>
 <h4 class="date">2020-09-15</h4>
 
@@ -373,121 +347,191 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 <div id="introduction" class="section level1">
 <h1>Introduction</h1>
-<p>The <em>multidimensional data model</em> was defined with the aim of supporting data analysis. In multidimensional systems, data is structured in facts and dimensions<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>.</p>
-<p>The star model is widely accepted, it is recommended for use in widely distributed end-user tools. In it we have a table for facts and a table for each dimension. Dimensions provide factual views for easy querying.</p>
-<p>The <em>geographical dimension</em> plays a fundamental role in multidimensional systems. In a multidimensional schema, there can be more than one geographic dimension.</p>
-<p>These dimensions allow us to associate places of different levels of detail with the factual data. For example, we can record data at the city level but later we may be interested in studying them grouped at the zone or nation level.</p>
-<p>It is very interesting to have the possibility of representing the reports obtained from multidimensional systems, using their geographic dimensions, on a map, or performing spatial analysis on them. Thus, the goal of this package is <strong>to enrich multidimensional queries with geographic data</strong>. In other words, it is not a question of making spatial queries but of generating a spatial layer with the result of the multidimensional queries and that this generation is done automatically, once the configuration of the geographical dimensions has been made.</p>
-<p>The rest of this document is structured as follows: An illustrative example of how the package works is presented. Then, the document ends with conclusions.</p>
+<p>The <em>multidimensional data model</em> was defined with the aim of
+supporting data analysis. In multidimensional systems, data is
+structured in facts and dimensions<a href="#fn1" class="footnote-ref" id="fnref1"><sup>1</sup></a>.</p>
+<p>The star model is widely accepted, it is recommended for use in
+widely distributed end-user tools. In it we have a table for facts and a
+table for each dimension. Dimensions provide factual views for easy
+querying.</p>
+<p>The <em>geographical dimension</em> plays a fundamental role in
+multidimensional systems. In a multidimensional schema, there can be
+more than one geographic dimension.</p>
+<p>These dimensions allow us to associate places of different levels of
+detail with the factual data. For example, we can record data at the
+city level but later we may be interested in studying them grouped at
+the zone or nation level.</p>
+<p>It is very interesting to have the possibility of representing the
+reports obtained from multidimensional systems, using their geographic
+dimensions, on a map, or performing spatial analysis on them. Thus, the
+goal of this package is <strong>to enrich multidimensional queries with
+geographic data</strong>. In other words, it is not a question of making
+spatial queries but of generating a spatial layer with the result of the
+multidimensional queries and that this generation is done automatically,
+once the configuration of the geographical dimensions has been made.</p>
+<p>The rest of this document is structured as follows: An illustrative
+example of how the package works is presented. Then, the document ends
+with conclusions.</p>
 </div>
 <div id="an-illustrative-example" class="section level1">
 <h1>An illustrative example</h1>
-<p>To perform multidimensional queries, the <code>multistar</code> class was defined in the <a href="https://CRAN.R-project.org/package=starschemar"><code>starschemar</code></a> package. A <code>multistar</code> implements the star schemas: it has a table for each dimension and a table for the facts; however, it can contain multiple fact tables with some dimensions in common.</p>
-<p>Using the functions defined in <code>starschemar</code> package, starting from a flat table implemented by means of a <code>tibble</code>, we can generate a <code>multistar</code> object.</p>
-<p>If we already have a star schema, <code>geomultistar</code> package offers functions to generate a <code>multistar</code> object from the fact and dimension tables in <code>tibble</code> format.</p>
+<p>To perform multidimensional queries, the <code>multistar</code> class
+was defined in the <a href="https://CRAN.R-project.org/package=starschemar"><code>starschemar</code></a>
+package. A <code>multistar</code> implements the star schemas: it has a
+table for each dimension and a table for the facts; however, it can
+contain multiple fact tables with some dimensions in common.</p>
+<p>Using the functions defined in <code>starschemar</code> package,
+starting from a flat table implemented by means of a
+<code>tibble</code>, we can generate a <code>multistar</code>
+object.</p>
+<p>If we already have a star schema, <code>geomultistar</code> package
+offers functions to generate a <code>multistar</code> object from the
+fact and dimension tables in <code>tibble</code> format.</p>
 <div id="generate-a-multistar-object" class="section level2">
 <h2>Generate a <code>multistar</code> object</h2>
-<p>In this case, we are going to suppose that we have tables of facts and dimensions in <code>tibble</code> format, which we have imported into R. In particular, we have the tables <code>mrs_fact_age</code>, <code>mrs_fact_cause</code>, <code>mrs_where</code>, <code>mrs_when</code> and <code>mrs_who</code>, obtained from the example presented in package <code>starschemar</code>: Two fact tables that share two of the three dimensions.</p>
+<p>In this case, we are going to suppose that we have tables of facts
+and dimensions in <code>tibble</code> format, which we have imported
+into R. In particular, we have the tables <code>mrs_fact_age</code>,
+<code>mrs_fact_cause</code>, <code>mrs_where</code>,
+<code>mrs_when</code> and <code>mrs_who</code>, obtained from the
+example presented in package <code>starschemar</code>: Two fact tables
+that share two of the three dimensions.</p>
 <div id="add-fact-tables" class="section level3">
 <h3>Add fact tables</h3>
-<p>We create an empty object, to which we will add elements. First we have to add a fact table, later we will add dimension tables or other fact tables.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="kw">library</span>(tidyr)</span>
-<span id="cb1-2"><a href="#cb1-2"></a><span class="kw">library</span>(geomultistar)</span>
-<span id="cb1-3"><a href="#cb1-3"></a></span>
-<span id="cb1-4"><a href="#cb1-4"></a>ms &lt;-<span class="st"> </span><span class="kw">multistar</span>() <span class="op">%&gt;%</span></span>
-<span id="cb1-5"><a href="#cb1-5"></a><span class="st">  </span><span class="kw">add_facts</span>(</span>
-<span id="cb1-6"><a href="#cb1-6"></a>    <span class="dt">fact_name =</span> <span class="st">&quot;mrs_age&quot;</span>,</span>
-<span id="cb1-7"><a href="#cb1-7"></a>    <span class="dt">fact_table =</span> mrs_fact_age,</span>
-<span id="cb1-8"><a href="#cb1-8"></a>    <span class="dt">measures =</span> <span class="st">&quot;n_deaths&quot;</span>,</span>
-<span id="cb1-9"><a href="#cb1-9"></a>    <span class="dt">nrow_agg =</span> <span class="st">&quot;count&quot;</span></span>
-<span id="cb1-10"><a href="#cb1-10"></a>  ) </span></code></pre></div>
-<p>For the facts we indicate a name, the table that contains its data and the names of the columns that contain the measures.</p>
-<p>You can indicate an aggregation function associated with each measure. This parameter should be defined only if some measure is not additive. In this case it is not necessary.</p>
-<p>Finally, you can indicate the name of a field that represents the number of rows grouped in each query: You can indicate the name of an existing column in the table for that purpose, or the name that you want to give to the column to be added if none exists. In this case, the name of a column in the table is assigned.</p>
-<p>Next we add another table of facts with characteristics similar to the previous one.</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a>ms &lt;-<span class="st"> </span>ms <span class="op">%&gt;%</span></span>
-<span id="cb2-2"><a href="#cb2-2"></a><span class="st">  </span><span class="kw">add_facts</span>(</span>
-<span id="cb2-3"><a href="#cb2-3"></a>    <span class="dt">fact_name =</span> <span class="st">&quot;mrs_cause&quot;</span>,</span>
-<span id="cb2-4"><a href="#cb2-4"></a>    <span class="dt">fact_table =</span> mrs_fact_cause,</span>
-<span id="cb2-5"><a href="#cb2-5"></a>    <span class="dt">measures =</span> <span class="kw">c</span>(<span class="st">&quot;pneumonia_and_influenza_deaths&quot;</span>, <span class="st">&quot;other_deaths&quot;</span>),</span>
-<span id="cb2-6"><a href="#cb2-6"></a>    <span class="dt">nrow_agg =</span> <span class="st">&quot;nrow_agg&quot;</span></span>
-<span id="cb2-7"><a href="#cb2-7"></a>  )</span></code></pre></div>
-<p>In this case, the column that contains the number of grouped rows precisely has the name that is assigned by default.</p>
+<p>We create an empty object, to which we will add elements. First we
+have to add a fact table, later we will add dimension tables or other
+fact tables.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>ms <span class="ot">&lt;-</span> <span class="fu">multistar</span>() <span class="sc">|&gt;</span></span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>  <span class="fu">add_facts</span>(</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>    <span class="at">fact_name =</span> <span class="st">&quot;mrs_age&quot;</span>,</span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a>    <span class="at">fact_table =</span> mrs_fact_age,</span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a>    <span class="at">measures =</span> <span class="st">&quot;n_deaths&quot;</span>,</span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a>    <span class="at">nrow_agg =</span> <span class="st">&quot;count&quot;</span></span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a>  ) </span></code></pre></div>
+<p>For the facts we indicate a name, the table that contains its data
+and the names of the columns that contain the measures.</p>
+<p>You can indicate an aggregation function associated with each
+measure. This parameter should be defined only if some measure is not
+additive. In this case it is not necessary.</p>
+<p>Finally, you can indicate the name of a field that represents the
+number of rows grouped in each query: You can indicate the name of an
+existing column in the table for that purpose, or the name that you want
+to give to the column to be added if none exists. In this case, the name
+of a column in the table is assigned.</p>
+<p>Next we add another table of facts with characteristics similar to
+the previous one.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>ms <span class="ot">&lt;-</span> ms <span class="sc">|&gt;</span></span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>  <span class="fu">add_facts</span>(</span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>    <span class="at">fact_name =</span> <span class="st">&quot;mrs_cause&quot;</span>,</span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>    <span class="at">fact_table =</span> mrs_fact_cause,</span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a>    <span class="at">measures =</span> <span class="fu">c</span>(<span class="st">&quot;pneumonia_and_influenza_deaths&quot;</span>, <span class="st">&quot;other_deaths&quot;</span>),</span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a>    <span class="at">nrow_agg =</span> <span class="st">&quot;nrow_agg&quot;</span></span>
+<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a>  )</span></code></pre></div>
+<p>In this case, the column that contains the number of grouped rows
+precisely has the name that is assigned by default.</p>
 </div>
 <div id="add-dimension-tables" class="section level3">
 <h3>Add dimension tables</h3>
-<p>Once we have at least one fact table, we can add dimension tables.</p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1"></a>ms &lt;-<span class="st"> </span>ms <span class="op">%&gt;%</span></span>
-<span id="cb3-2"><a href="#cb3-2"></a><span class="st">  </span><span class="kw">add_dimension</span>(</span>
-<span id="cb3-3"><a href="#cb3-3"></a>    <span class="dt">dimension_name =</span> <span class="st">&quot;where&quot;</span>,</span>
-<span id="cb3-4"><a href="#cb3-4"></a>    <span class="dt">dimension_table =</span> mrs_where,</span>
-<span id="cb3-5"><a href="#cb3-5"></a>    <span class="dt">dimension_key =</span> <span class="st">&quot;where_pk&quot;</span>,</span>
-<span id="cb3-6"><a href="#cb3-6"></a>    <span class="dt">fact_name =</span> <span class="st">&quot;mrs_age&quot;</span>,</span>
-<span id="cb3-7"><a href="#cb3-7"></a>    <span class="dt">fact_key =</span> <span class="st">&quot;where_fk&quot;</span></span>
-<span id="cb3-8"><a href="#cb3-8"></a>  )</span></code></pre></div>
-<p>For each dimension we define its name, the table that contains the data, the name of the primary key and, for the table of facts with which we are going to relate it, its name and the name of the corresponding foreign key.</p>
-<p>To establish the relationship successfully, it is verified that there is referential integrity between the tables using the indicated columns. The columns corresponding to the primary and foreign keys are renamed and are no longer available for queries. If you want to keep the field in the dimension, it can be indicated by a parameter, as is shown below by parameter <code>key_as_data</code>.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1"></a>ms &lt;-<span class="st"> </span>ms <span class="op">%&gt;%</span></span>
-<span id="cb4-2"><a href="#cb4-2"></a><span class="st">  </span><span class="kw">add_dimension</span>(</span>
-<span id="cb4-3"><a href="#cb4-3"></a>    <span class="dt">dimension_name =</span> <span class="st">&quot;when&quot;</span>,</span>
-<span id="cb4-4"><a href="#cb4-4"></a>    <span class="dt">dimension_table =</span> mrs_when,</span>
-<span id="cb4-5"><a href="#cb4-5"></a>    <span class="dt">dimension_key =</span> <span class="st">&quot;when_pk&quot;</span>,</span>
-<span id="cb4-6"><a href="#cb4-6"></a>    <span class="dt">fact_name =</span> <span class="st">&quot;mrs_age&quot;</span>,</span>
-<span id="cb4-7"><a href="#cb4-7"></a>    <span class="dt">fact_key =</span> <span class="st">&quot;when_fk&quot;</span>,</span>
-<span id="cb4-8"><a href="#cb4-8"></a>    <span class="dt">key_as_data =</span> <span class="ot">TRUE</span></span>
-<span id="cb4-9"><a href="#cb4-9"></a>  ) <span class="op">%&gt;%</span></span>
-<span id="cb4-10"><a href="#cb4-10"></a><span class="st">  </span><span class="kw">add_dimension</span>(</span>
-<span id="cb4-11"><a href="#cb4-11"></a>    <span class="dt">dimension_name =</span> <span class="st">&quot;who&quot;</span>,</span>
-<span id="cb4-12"><a href="#cb4-12"></a>    <span class="dt">dimension_table =</span> mrs_who,</span>
-<span id="cb4-13"><a href="#cb4-13"></a>    <span class="dt">dimension_key =</span> <span class="st">&quot;who_pk&quot;</span>,</span>
-<span id="cb4-14"><a href="#cb4-14"></a>    <span class="dt">fact_name =</span> <span class="st">&quot;mrs_age&quot;</span>,</span>
-<span id="cb4-15"><a href="#cb4-15"></a>    <span class="dt">fact_key =</span> <span class="st">&quot;who_fk&quot;</span></span>
-<span id="cb4-16"><a href="#cb4-16"></a>  )</span></code></pre></div>
-<p>If a dimension is related to more than one fact table, when it is added, its relationship to only one can be defined. Later, additional relationships can be defined, as we will see next.</p>
+<p>Once we have at least one fact table, we can add dimension
+tables.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>ms <span class="ot">&lt;-</span> ms <span class="sc">|&gt;</span></span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>  <span class="fu">add_dimension</span>(</span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>    <span class="at">dimension_name =</span> <span class="st">&quot;where&quot;</span>,</span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>    <span class="at">dimension_table =</span> mrs_where,</span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>    <span class="at">dimension_key =</span> <span class="st">&quot;where_pk&quot;</span>,</span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>    <span class="at">fact_name =</span> <span class="st">&quot;mrs_age&quot;</span>,</span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a>    <span class="at">fact_key =</span> <span class="st">&quot;where_fk&quot;</span></span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a>  )</span></code></pre></div>
+<p>For each dimension we define its name, the table that contains the
+data, the name of the primary key and, for the table of facts with which
+we are going to relate it, its name and the name of the corresponding
+foreign key.</p>
+<p>To establish the relationship successfully, it is verified that there
+is referential integrity between the tables using the indicated columns.
+The columns corresponding to the primary and foreign keys are renamed
+and are no longer available for queries. If you want to keep the field
+in the dimension, it can be indicated by a parameter, as is shown below
+by parameter <code>key_as_data</code>.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>ms <span class="ot">&lt;-</span> ms <span class="sc">|&gt;</span></span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>  <span class="fu">add_dimension</span>(</span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>    <span class="at">dimension_name =</span> <span class="st">&quot;when&quot;</span>,</span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>    <span class="at">dimension_table =</span> mrs_when,</span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a>    <span class="at">dimension_key =</span> <span class="st">&quot;when_pk&quot;</span>,</span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>    <span class="at">fact_name =</span> <span class="st">&quot;mrs_age&quot;</span>,</span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>    <span class="at">fact_key =</span> <span class="st">&quot;when_fk&quot;</span>,</span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a>    <span class="at">key_as_data =</span> <span class="cn">TRUE</span></span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a>  <span class="fu">add_dimension</span>(</span>
+<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a>    <span class="at">dimension_name =</span> <span class="st">&quot;who&quot;</span>,</span>
+<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a>    <span class="at">dimension_table =</span> mrs_who,</span>
+<span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a>    <span class="at">dimension_key =</span> <span class="st">&quot;who_pk&quot;</span>,</span>
+<span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a>    <span class="at">fact_name =</span> <span class="st">&quot;mrs_age&quot;</span>,</span>
+<span id="cb4-15"><a href="#cb4-15" tabindex="-1"></a>    <span class="at">fact_key =</span> <span class="st">&quot;who_fk&quot;</span></span>
+<span id="cb4-16"><a href="#cb4-16" tabindex="-1"></a>  )</span></code></pre></div>
+<p>If a dimension is related to more than one fact table, when it is
+added, its relationship to only one can be defined. Later, additional
+relationships can be defined, as we will see next.</p>
 </div>
 <div id="relate-dimensions" class="section level3">
 <h3>Relate dimensions</h3>
-<p>Once a dimension is included in the <code>multistar</code>, we can relate it to other fact tables.</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1"></a>ms &lt;-<span class="st"> </span>ms <span class="op">%&gt;%</span></span>
-<span id="cb5-2"><a href="#cb5-2"></a><span class="st">  </span><span class="kw">relate_dimension</span>(<span class="dt">dimension_name =</span> <span class="st">&quot;where&quot;</span>,</span>
-<span id="cb5-3"><a href="#cb5-3"></a>                   <span class="dt">fact_name =</span> <span class="st">&quot;mrs_cause&quot;</span>,</span>
-<span id="cb5-4"><a href="#cb5-4"></a>                   <span class="dt">fact_key =</span> <span class="st">&quot;where_fk&quot;</span>) <span class="op">%&gt;%</span></span>
-<span id="cb5-5"><a href="#cb5-5"></a><span class="st">  </span><span class="kw">relate_dimension</span>(<span class="dt">dimension_name =</span> <span class="st">&quot;when&quot;</span>,</span>
-<span id="cb5-6"><a href="#cb5-6"></a>                   <span class="dt">fact_name =</span> <span class="st">&quot;mrs_cause&quot;</span>,</span>
-<span id="cb5-7"><a href="#cb5-7"></a>                   <span class="dt">fact_key =</span> <span class="st">&quot;when_fk&quot;</span>)</span></code></pre></div>
-<p>In this case, to specify the dimension we only have to indicate its name.</p>
+<p>Once a dimension is included in the <code>multistar</code>, we can
+relate it to other fact tables.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>ms <span class="ot">&lt;-</span> ms <span class="sc">|&gt;</span></span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>  <span class="fu">relate_dimension</span>(<span class="at">dimension_name =</span> <span class="st">&quot;where&quot;</span>,</span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>                   <span class="at">fact_name =</span> <span class="st">&quot;mrs_cause&quot;</span>,</span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>                   <span class="at">fact_key =</span> <span class="st">&quot;where_fk&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>  <span class="fu">relate_dimension</span>(<span class="at">dimension_name =</span> <span class="st">&quot;when&quot;</span>,</span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a>                   <span class="at">fact_name =</span> <span class="st">&quot;mrs_cause&quot;</span>,</span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a>                   <span class="at">fact_key =</span> <span class="st">&quot;when_fk&quot;</span>)</span></code></pre></div>
+<p>In this case, to specify the dimension we only have to indicate its
+name.</p>
 </div>
 <div id="additional-operations-on-the-multistar-object" class="section level3">
 <h3>Additional operations on the <code>multistar</code> object</h3>
-<p>Through the previous operations, we generate a <code>multistar</code> object to which we can apply the operations defined in the <code>starschemar</code> package for this class. At this moment we can export it as a flat table, using <code>multistar_as_flat_table</code>, or define multidimensional queries, as we will later use <code>dimensional_query</code>.</p>
+<p>Through the previous operations, we generate a <code>multistar</code>
+object to which we can apply the operations defined in the
+<code>starschemar</code> package for this class. At this moment we can
+export it as a flat table, using <code>multistar_as_flat_table</code>,
+or define multidimensional queries, as we will later use
+<code>dimensional_query</code>.</p>
 </div>
 </div>
 <div id="define-geographic-dimensions-and-attributes" class="section level2">
 <h2>Define geographic dimensions and attributes</h2>
-<p>To define the dimensions and geographic attributes of a <code>multistar</code> object, we must define a <code>geomultistar</code> specialization from it, which allows to store this information.</p>
-<p>We create a <code>geomultistar</code> object from a <code>multistar</code> one defining the names of the dimensions that contain geographic information. In the example only one dimension.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1"></a><span class="kw">library</span>(sf)</span>
-<span id="cb6-2"><a href="#cb6-2"></a><span class="co">#&gt; Linking to GEOS 3.8.0, GDAL 3.0.4, PROJ 6.3.1</span></span>
-<span id="cb6-3"><a href="#cb6-3"></a></span>
-<span id="cb6-4"><a href="#cb6-4"></a>gms &lt;-</span>
-<span id="cb6-5"><a href="#cb6-5"></a><span class="st">  </span><span class="kw">geomultistar</span>(ms, <span class="dt">geodimension =</span> <span class="st">&quot;where&quot;</span>)</span></code></pre></div>
-<p>For each attribute of a geographic dimension that we want to use in queries, we can define a vector layer with which a relationship can be established using one or more attributes of the dimension.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1"></a>gms &lt;-<span class="st"> </span>gms <span class="op">%&gt;%</span></span>
-<span id="cb7-2"><a href="#cb7-2"></a><span class="st">  </span><span class="kw">define_geoattribute</span>(</span>
-<span id="cb7-3"><a href="#cb7-3"></a>    <span class="dt">attribute =</span> <span class="st">&quot;city&quot;</span>,</span>
-<span id="cb7-4"><a href="#cb7-4"></a>    <span class="dt">from_layer =</span> usa_cities,</span>
-<span id="cb7-5"><a href="#cb7-5"></a>    <span class="dt">by =</span> <span class="kw">c</span>(<span class="st">&quot;city&quot;</span> =<span class="st"> &quot;city&quot;</span>, <span class="st">&quot;state&quot;</span> =<span class="st"> &quot;state&quot;</span>)</span>
-<span id="cb7-6"><a href="#cb7-6"></a>  ) </span></code></pre></div>
-<p>For the <code>city</code> attribute, a relationship is defined with a vector layer in <code>sf</code> format (<code>usa_cities</code>), using the <code>city</code> and <code>state</code> attributes<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a> that have the same name in the layer.</p>
-<p>Sometimes there may be problems establishing the correspondence between the geographic attributes and the vector layer: Instances may remain unrelated. To detect these situations, we can query the rows that do not have associated geometry using the following function.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1"></a>empty_city &lt;-<span class="st"> </span>gms <span class="op">%&gt;%</span></span>
-<span id="cb8-2"><a href="#cb8-2"></a><span class="st">  </span><span class="kw">get_empty_geoinstances</span>(<span class="dt">attribute =</span> <span class="st">&quot;city&quot;</span>)</span></code></pre></div>
+<p>To define the dimensions and geographic attributes of a
+<code>multistar</code> object, we must define a
+<code>geomultistar</code> specialization from it, which allows to store
+this information.</p>
+<p>We create a <code>geomultistar</code> object from a
+<code>multistar</code> one defining the names of the dimensions that
+contain geographic information. In the example only one dimension.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>gms <span class="ot">&lt;-</span></span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>  <span class="fu">geomultistar</span>(ms, <span class="at">geodimension =</span> <span class="st">&quot;where&quot;</span>)</span></code></pre></div>
+<p>For each attribute of a geographic dimension that we want to use in
+queries, we can define a vector layer with which a relationship can be
+established using one or more attributes of the dimension.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>gms <span class="ot">&lt;-</span> gms <span class="sc">|&gt;</span></span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>  <span class="fu">define_geoattribute</span>(</span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>    <span class="at">attribute =</span> <span class="st">&quot;city&quot;</span>,</span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>    <span class="at">from_layer =</span> usa_cities,</span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>    <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;city&quot;</span> <span class="ot">=</span> <span class="st">&quot;city&quot;</span>, <span class="st">&quot;state&quot;</span> <span class="ot">=</span> <span class="st">&quot;state&quot;</span>)</span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a>  ) </span></code></pre></div>
+<p>For the <code>city</code> attribute, a relationship is defined with a
+vector layer in <code>sf</code> format (<code>usa_cities</code>), using
+the <code>city</code> and <code>state</code> attributes<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a> that have the same
+name in the layer.</p>
+<p>Sometimes there may be problems establishing the correspondence
+between the geographic attributes and the vector layer: Instances may
+remain unrelated. To detect these situations, we can query the rows that
+do not have associated geometry using the following function.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>empty_city <span class="ot">&lt;-</span> gms <span class="sc">|&gt;</span></span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>  <span class="fu">get_empty_geoinstances</span>(<span class="at">attribute =</span> <span class="st">&quot;city&quot;</span>)</span></code></pre></div>
 <p>The result obtained is shown below.</p>
-<table style="width:47%;">
+<table style="width:65%;">
 <colgroup>
-<col width="13%"></col>
-<col width="13%"></col>
-<col width="19%"></col>
+<col width="13%" />
+<col width="13%" />
+<col width="37%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -500,27 +544,30 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <tr class="odd">
 <td align="center">Unknown</td>
 <td align="center">Unknown</td>
-<td align="center">POINT EMPTY</td>
+<td align="center">GEOMETRYCOLLECTION EMPTY</td>
 </tr>
 </tbody>
 </table>
-<p>In this case, for the unknown cities, their location has not been determined. There may be several because other geographic data of less granularity may be known.</p>
-<p>In the same way, the relationship for <code>county</code> with the corresponding layer (<code>usa_counties</code>) is defined.</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1"></a>gms &lt;-<span class="st"> </span>gms <span class="op">%&gt;%</span></span>
-<span id="cb9-2"><a href="#cb9-2"></a><span class="st">  </span><span class="kw">define_geoattribute</span>(</span>
-<span id="cb9-3"><a href="#cb9-3"></a>    <span class="dt">attribute =</span> <span class="st">&quot;county&quot;</span>,</span>
-<span id="cb9-4"><a href="#cb9-4"></a>    <span class="dt">from_layer =</span> usa_counties,</span>
-<span id="cb9-5"><a href="#cb9-5"></a>    <span class="dt">by =</span> <span class="kw">c</span>(<span class="st">&quot;county&quot;</span> =<span class="st"> &quot;county&quot;</span>, <span class="st">&quot;state&quot;</span> =<span class="st"> &quot;state&quot;</span>)</span>
-<span id="cb9-6"><a href="#cb9-6"></a>  )  </span></code></pre></div>
+<p>In this case, for the unknown cities, their location has not been
+determined. There may be several because other geographic data of less
+granularity may be known.</p>
+<p>In the same way, the relationship for <code>county</code> with the
+corresponding layer (<code>usa_counties</code>) is defined.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>gms <span class="ot">&lt;-</span> gms <span class="sc">|&gt;</span></span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>  <span class="fu">define_geoattribute</span>(</span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>    <span class="at">attribute =</span> <span class="st">&quot;county&quot;</span>,</span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a>    <span class="at">from_layer =</span> usa_counties,</span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a>    <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;county&quot;</span> <span class="ot">=</span> <span class="st">&quot;county&quot;</span>, <span class="st">&quot;state&quot;</span> <span class="ot">=</span> <span class="st">&quot;state&quot;</span>)</span>
+<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a>  )  </span></code></pre></div>
 <p>We check if they have all been related.</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1"></a>empty_county &lt;-<span class="st"> </span>gms <span class="op">%&gt;%</span></span>
-<span id="cb10-2"><a href="#cb10-2"></a><span class="st">  </span><span class="kw">get_empty_geoinstances</span>(<span class="dt">attribute =</span> <span class="st">&quot;county&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a>empty_county <span class="ot">&lt;-</span> gms <span class="sc">|&gt;</span></span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>  <span class="fu">get_empty_geoinstances</span>(<span class="at">attribute =</span> <span class="st">&quot;county&quot;</span>)</span></code></pre></div>
 <p>And the result obtained is shown below.</p>
 <table style="width:65%;">
 <colgroup>
-<col width="13%"></col>
-<col width="13%"></col>
-<col width="37%"></col>
+<col width="13%" />
+<col width="13%" />
+<col width="37%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -537,60 +584,80 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 </tr>
 </tbody>
 </table>
-<p>It also happens for the same instances. In this case we can see that the associated geometry is of a different type.</p>
-<p>In the case of <code>state</code> the definition is carried out by associating the code to the corresponding one in the layer (<code>usa_states</code>).</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1"></a>gms &lt;-<span class="st"> </span>gms <span class="op">%&gt;%</span></span>
-<span id="cb11-2"><a href="#cb11-2"></a><span class="st">  </span><span class="kw">define_geoattribute</span>(</span>
-<span id="cb11-3"><a href="#cb11-3"></a>    <span class="dt">attribute =</span> <span class="kw">c</span>(<span class="st">&quot;state&quot;</span>),</span>
-<span id="cb11-4"><a href="#cb11-4"></a>    <span class="dt">from_layer =</span> usa_states,</span>
-<span id="cb11-5"><a href="#cb11-5"></a>    <span class="dt">by =</span> <span class="kw">c</span>(<span class="st">&quot;state&quot;</span> =<span class="st"> &quot;state&quot;</span>)</span>
-<span id="cb11-6"><a href="#cb11-6"></a>  ) </span></code></pre></div>
-<p>Additionally, for an attribute we can generate its layer from the one associated with another related attribute of the dimension. This is what has been done below for <code>division</code>.</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1"></a>gms &lt;-<span class="st"> </span>gms <span class="op">%&gt;%</span></span>
-<span id="cb12-2"><a href="#cb12-2"></a><span class="st">  </span><span class="kw">define_geoattribute</span>(</span>
-<span id="cb12-3"><a href="#cb12-3"></a>    <span class="dt">attribute =</span> <span class="st">&quot;division&quot;</span>,</span>
-<span id="cb12-4"><a href="#cb12-4"></a>    <span class="dt">from_attribute =</span> <span class="st">&quot;state&quot;</span></span>
-<span id="cb12-5"><a href="#cb12-5"></a>  ) </span></code></pre></div>
-<p>In this case, the vector layer is generated from the data available in the layer under consideration. Sometimes this is precisely what is desired. If not, look for a vector layer at that level of detail.</p>
-<p>If no attribute name is indicated, this operation is applied to the rest of the attributes of the dimension that do not have an associated vector layer by any of the methods presented, as shown below.</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1"></a>gms &lt;-<span class="st"> </span>gms <span class="op">%&gt;%</span></span>
-<span id="cb13-2"><a href="#cb13-2"></a><span class="st">  </span><span class="kw">define_geoattribute</span>(<span class="dt">from_attribute =</span> <span class="st">&quot;state&quot;</span>)</span></code></pre></div>
-<p>With this we have all the attributes of the dimension with an associated layer, defined at its level of granularity<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>. On the other hand, we can change the layer of any attribute at any time, independently of the rest.</p>
+<p>It also happens for the same instances. In this case we can see that
+the associated geometry is of a different type.</p>
+<p>In the case of <code>state</code> the definition is carried out by
+associating the code to the corresponding one in the layer
+(<code>usa_states</code>).</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a>gms <span class="ot">&lt;-</span> gms <span class="sc">|&gt;</span></span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a>  <span class="fu">define_geoattribute</span>(</span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a>    <span class="at">attribute =</span> <span class="fu">c</span>(<span class="st">&quot;state&quot;</span>),</span>
+<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a>    <span class="at">from_layer =</span> usa_states,</span>
+<span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a>    <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;state&quot;</span> <span class="ot">=</span> <span class="st">&quot;state&quot;</span>)</span>
+<span id="cb11-6"><a href="#cb11-6" tabindex="-1"></a>  ) </span></code></pre></div>
+<p>Additionally, for an attribute we can generate its layer from the one
+associated with another related attribute of the dimension. This is what
+has been done below for <code>division</code>.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a>gms <span class="ot">&lt;-</span> gms <span class="sc">|&gt;</span></span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a>  <span class="fu">define_geoattribute</span>(</span>
+<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a>    <span class="at">attribute =</span> <span class="st">&quot;division&quot;</span>,</span>
+<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a>    <span class="at">from_attribute =</span> <span class="st">&quot;state&quot;</span></span>
+<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a>  ) </span></code></pre></div>
+<p>In this case, the vector layer is generated from the data available
+in the layer under consideration. Sometimes this is precisely what is
+desired. If not, look for a vector layer at that level of detail.</p>
+<p>If no attribute name is indicated, this operation is applied to the
+rest of the attributes of the dimension that do not have an associated
+vector layer by any of the methods presented, as shown below.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a>gms <span class="ot">&lt;-</span> gms <span class="sc">|&gt;</span></span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a>  <span class="fu">define_geoattribute</span>(<span class="at">from_attribute =</span> <span class="st">&quot;state&quot;</span>)</span></code></pre></div>
+<p>With this we have all the attributes of the dimension with an
+associated layer, defined at its level of granularity<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>. On the other hand, we
+can change the layer of any attribute at any time, independently of the
+rest.</p>
 </div>
 <div id="define-multidimensional-queries" class="section level2">
 <h2>Define multidimensional queries</h2>
-<p>Multidimensional queries are defined from a <code>multistar</code> object in the <code>starschemar</code> package. Since we are working with <code>geomultistar</code>, a specialization of <code>multistar</code>, we can use this object to define the query.</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1"></a><span class="kw">library</span>(starschemar)</span>
-<span id="cb14-2"><a href="#cb14-2"></a></span>
-<span id="cb14-3"><a href="#cb14-3"></a>gdqr &lt;-<span class="st"> </span><span class="kw">dimensional_query</span>(gms) <span class="op">%&gt;%</span></span>
-<span id="cb14-4"><a href="#cb14-4"></a><span class="st">  </span><span class="kw">select_dimension</span>(<span class="dt">name =</span> <span class="st">&quot;where&quot;</span>,</span>
-<span id="cb14-5"><a href="#cb14-5"></a>                   <span class="dt">attributes =</span> <span class="kw">c</span>(<span class="st">&quot;division_name&quot;</span>, <span class="st">&quot;region_name&quot;</span>)) <span class="op">%&gt;%</span></span>
-<span id="cb14-6"><a href="#cb14-6"></a><span class="st">  </span><span class="kw">select_dimension</span>(<span class="dt">name =</span> <span class="st">&quot;when&quot;</span>,</span>
-<span id="cb14-7"><a href="#cb14-7"></a>                   <span class="dt">attributes =</span> <span class="kw">c</span>(<span class="st">&quot;year&quot;</span>, <span class="st">&quot;week&quot;</span>)) <span class="op">%&gt;%</span></span>
-<span id="cb14-8"><a href="#cb14-8"></a><span class="st">  </span><span class="kw">select_fact</span>(<span class="dt">name =</span> <span class="st">&quot;mrs_age&quot;</span>,</span>
-<span id="cb14-9"><a href="#cb14-9"></a>              <span class="dt">measures =</span> <span class="kw">c</span>(<span class="st">&quot;n_deaths&quot;</span>)) <span class="op">%&gt;%</span></span>
-<span id="cb14-10"><a href="#cb14-10"></a><span class="st">  </span><span class="kw">select_fact</span>(</span>
-<span id="cb14-11"><a href="#cb14-11"></a>    <span class="dt">name =</span> <span class="st">&quot;mrs_cause&quot;</span>,</span>
-<span id="cb14-12"><a href="#cb14-12"></a>    <span class="dt">measures =</span> <span class="kw">c</span>(<span class="st">&quot;pneumonia_and_influenza_deaths&quot;</span>, <span class="st">&quot;other_deaths&quot;</span>)</span>
-<span id="cb14-13"><a href="#cb14-13"></a>  ) <span class="op">%&gt;%</span></span>
-<span id="cb14-14"><a href="#cb14-14"></a><span class="st">  </span><span class="kw">filter_dimension</span>(<span class="dt">name =</span> <span class="st">&quot;when&quot;</span>, week <span class="op">&lt;=</span><span class="st"> &quot;03&quot;</span>)</span></code></pre></div>
-<p>The definition functions of this type of queries are quite intuitive, they are explained in the vignette of package <a href="https://CRAN.R-project.org/package=starschemar"><code>starschemar</code></a>.</p>
-<p>If we use the function <code>run_query</code> of the mentioned package, a normal multidimensional query is executed, as shown below.</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1"></a>ft &lt;-<span class="st"> </span>gdqr <span class="op">%&gt;%</span></span>
-<span id="cb15-2"><a href="#cb15-2"></a><span class="st">  </span><span class="kw">run_query</span>() <span class="op">%&gt;%</span></span>
-<span id="cb15-3"><a href="#cb15-3"></a><span class="st">  </span><span class="kw">multistar_as_flat_table</span>()</span></code></pre></div>
-<p>The result of this type of query is a <code>multistar</code> object, which we can transform into a flat table to display it more easily, as we do below for the first rows..</p>
-<table>
+<p>Multidimensional queries are defined from a <code>multistar</code>
+object in the <code>starschemar</code> package. Since we are working
+with <code>geomultistar</code>, a specialization of
+<code>multistar</code>, we can use this object to define the query.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a><span class="fu">library</span>(starschemar)</span>
+<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a></span>
+<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a>gdqr <span class="ot">&lt;-</span> <span class="fu">dimensional_query</span>(gms) <span class="sc">|&gt;</span></span>
+<span id="cb14-4"><a href="#cb14-4" tabindex="-1"></a>  <span class="fu">select_dimension</span>(<span class="at">name =</span> <span class="st">&quot;where&quot;</span>,</span>
+<span id="cb14-5"><a href="#cb14-5" tabindex="-1"></a>                   <span class="at">attributes =</span> <span class="fu">c</span>(<span class="st">&quot;division_name&quot;</span>, <span class="st">&quot;region_name&quot;</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb14-6"><a href="#cb14-6" tabindex="-1"></a>  <span class="fu">select_dimension</span>(<span class="at">name =</span> <span class="st">&quot;when&quot;</span>,</span>
+<span id="cb14-7"><a href="#cb14-7" tabindex="-1"></a>                   <span class="at">attributes =</span> <span class="fu">c</span>(<span class="st">&quot;year&quot;</span>, <span class="st">&quot;week&quot;</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb14-8"><a href="#cb14-8" tabindex="-1"></a>  <span class="fu">select_fact</span>(<span class="at">name =</span> <span class="st">&quot;mrs_age&quot;</span>,</span>
+<span id="cb14-9"><a href="#cb14-9" tabindex="-1"></a>              <span class="at">measures =</span> <span class="fu">c</span>(<span class="st">&quot;n_deaths&quot;</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb14-10"><a href="#cb14-10" tabindex="-1"></a>  <span class="fu">select_fact</span>(</span>
+<span id="cb14-11"><a href="#cb14-11" tabindex="-1"></a>    <span class="at">name =</span> <span class="st">&quot;mrs_cause&quot;</span>,</span>
+<span id="cb14-12"><a href="#cb14-12" tabindex="-1"></a>    <span class="at">measures =</span> <span class="fu">c</span>(<span class="st">&quot;pneumonia_and_influenza_deaths&quot;</span>, <span class="st">&quot;other_deaths&quot;</span>)</span>
+<span id="cb14-13"><a href="#cb14-13" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb14-14"><a href="#cb14-14" tabindex="-1"></a>  <span class="fu">filter_dimension</span>(<span class="at">name =</span> <span class="st">&quot;when&quot;</span>, week <span class="sc">&lt;=</span> <span class="st">&quot;03&quot;</span>)</span></code></pre></div>
+<p>The definition functions of this type of queries are quite intuitive,
+they are explained in the vignette of package <a href="https://CRAN.R-project.org/package=starschemar"><code>starschemar</code></a>.</p>
+<p>If we use the function <code>run_query</code> of the mentioned
+package, a normal multidimensional query is executed, as shown
+below.</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a>ft <span class="ot">&lt;-</span> gdqr <span class="sc">|&gt;</span></span>
+<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a>  <span class="fu">run_query</span>() <span class="sc">|&gt;</span></span>
+<span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a>  <span class="fu">multistar_as_flat_table</span>()</span></code></pre></div>
+<p>The result of this type of query is a <code>multistar</code> object,
+which we can transform into a flat table to display it more easily, as
+we do below for the first rows..</p>
+<table style="width:100%;">
 <colgroup>
-<col width="5%"></col>
-<col width="5%"></col>
-<col width="15%"></col>
-<col width="10%"></col>
-<col width="8%"></col>
-<col width="5%"></col>
-<col width="24%"></col>
-<col width="10%"></col>
-<col width="15%"></col>
+<col width="4%" />
+<col width="4%" />
+<col width="13%" />
+<col width="8%" />
+<col width="7%" />
+<col width="5%" />
+<col width="27%" />
+<col width="15%" />
+<col width="13%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -600,8 +667,8 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <th align="center">region_name</th>
 <th align="center">n_deaths</th>
 <th align="center">count</th>
-<th align="center">pneumonia_and_influenza_deaths</th>
-<th align="center">other_deaths</th>
+<th align="center">mrs_cause_pneumonia_and_influenza_deaths</th>
+<th align="center">mrs_cause_other_deaths</th>
 <th align="center">mrs_cause_nrow_agg</th>
 </tr>
 </thead>
@@ -743,22 +810,25 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 </div>
 <div id="run-queries-adding-geographic-information" class="section level2">
 <h2>Run queries adding geographic information</h2>
-<p>If instead of executing the standard query, we execute <code>run_geoquery</code> function, from this package, we automatically obtain a vector layer at the finest possible level of detail, depending on the definition of the query.</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1"></a>vl_sf &lt;-<span class="st"> </span>gdqr <span class="op">%&gt;%</span></span>
-<span id="cb16-2"><a href="#cb16-2"></a><span class="st">  </span><span class="kw">run_geoquery</span>()</span></code></pre></div>
+<p>If instead of executing the standard query, we execute
+<code>run_geoquery</code> function, from this package, we automatically
+obtain a vector layer at the finest possible level of detail, depending
+on the definition of the query.</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a>vl_sf <span class="ot">&lt;-</span> gdqr <span class="sc">|&gt;</span></span>
+<span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a>  <span class="fu">run_geoquery</span>()</span></code></pre></div>
 <p>The first rows of the result can be seen below in table form.</p>
 <table>
 <colgroup>
-<col width="4%"></col>
-<col width="4%"></col>
-<col width="12%"></col>
-<col width="8%"></col>
-<col width="6%"></col>
-<col width="4%"></col>
-<col width="19%"></col>
-<col width="8%"></col>
-<col width="12%"></col>
-<col width="19%"></col>
+<col width="3%" />
+<col width="3%" />
+<col width="11%" />
+<col width="7%" />
+<col width="5%" />
+<col width="4%" />
+<col width="22%" />
+<col width="13%" />
+<col width="11%" />
+<col width="17%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -768,8 +838,8 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <th align="center">region_name</th>
 <th align="center">n_deaths</th>
 <th align="center">count</th>
-<th align="center">pneumonia_and_influenza_deaths</th>
-<th align="center">other_deaths</th>
+<th align="center">mrs_cause_pneumonia_and_influenza_deaths</th>
+<th align="center">mrs_cause_other_deaths</th>
 <th align="center">mrs_cause_nrow_agg</th>
 <th align="center">geometry</th>
 </tr>
@@ -785,7 +855,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <td align="center">113</td>
 <td align="center">2145</td>
 <td align="center">16</td>
-<td align="center">MULTIPOLYGON (((-91.51 40.2…</td>
+<td align="center">MULTIPOLYGON (((-84.65 45.8…</td>
 </tr>
 <tr class="even">
 <td align="center">1962</td>
@@ -797,7 +867,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <td align="center">31</td>
 <td align="center">495</td>
 <td align="center">7</td>
-<td align="center">MULTIPOLYGON (((-88.47 31.8…</td>
+<td align="center">MULTIPOLYGON (((-88.4 30.37…</td>
 </tr>
 <tr class="odd">
 <td align="center">1962</td>
@@ -809,7 +879,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <td align="center">173</td>
 <td align="center">3279</td>
 <td align="center">20</td>
-<td align="center">MULTIPOLYGON (((-75.56 39.6…</td>
+<td align="center">MULTIPOLYGON (((-72.03 41.2…</td>
 </tr>
 <tr class="even">
 <td align="center">1962</td>
@@ -821,7 +891,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <td align="center">34</td>
 <td align="center">380</td>
 <td align="center">8</td>
-<td align="center">POLYGON ((-109.1 31.33, -11…</td>
+<td align="center">MULTIPOLYGON (((-109.1 41, …</td>
 </tr>
 <tr class="odd">
 <td align="center">1962</td>
@@ -833,7 +903,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <td align="center">56</td>
 <td align="center">729</td>
 <td align="center">14</td>
-<td align="center">MULTIPOLYGON (((-71.63 41.1…</td>
+<td align="center">MULTIPOLYGON (((-71.59 41.1…</td>
 </tr>
 <tr class="even">
 <td align="center">1962</td>
@@ -845,7 +915,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <td align="center">56</td>
 <td align="center">1511</td>
 <td align="center">14</td>
-<td align="center">MULTIPOLYGON (((-156 19.78,…</td>
+<td align="center">MULTIPOLYGON (((-156.1 19.7…</td>
 </tr>
 <tr class="odd">
 <td align="center">1962</td>
@@ -869,7 +939,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <td align="center">47</td>
 <td align="center">889</td>
 <td align="center">10</td>
-<td align="center">POLYGON ((-91.42 40.38, -91…</td>
+<td align="center">POLYGON ((-102 36.99, -94.6…</td>
 </tr>
 <tr class="odd">
 <td align="center">1962</td>
@@ -881,7 +951,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <td align="center">66</td>
 <td align="center">1177</td>
 <td align="center">13</td>
-<td align="center">POLYGON ((-91.17 33, -91.07…</td>
+<td align="center">POLYGON ((-106.6 31.87, -10…</td>
 </tr>
 <tr class="even">
 <td align="center">1962</td>
@@ -893,7 +963,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <td align="center">115</td>
 <td align="center">2174</td>
 <td align="center">16</td>
-<td align="center">MULTIPOLYGON (((-91.51 40.2…</td>
+<td align="center">MULTIPOLYGON (((-84.65 45.8…</td>
 </tr>
 <tr class="odd">
 <td align="center">1962</td>
@@ -905,7 +975,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <td align="center">36</td>
 <td align="center">539</td>
 <td align="center">7</td>
-<td align="center">MULTIPOLYGON (((-88.47 31.8…</td>
+<td align="center">MULTIPOLYGON (((-88.4 30.37…</td>
 </tr>
 <tr class="even">
 <td align="center">1962</td>
@@ -917,47 +987,58 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <td align="center">157</td>
 <td align="center">3269</td>
 <td align="center">20</td>
-<td align="center">MULTIPOLYGON (((-75.56 39.6…</td>
+<td align="center">MULTIPOLYGON (((-72.03 41.2…</td>
 </tr>
 </tbody>
 </table>
-<p>The result is a vector layer that we can save, perform spatial analysis or queries on it, or we can see it as a map, using the functions associated with the <code>sf</code> class.</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1"></a><span class="kw">class</span>(vl_sf)</span>
-<span id="cb17-2"><a href="#cb17-2"></a><span class="co">#&gt; [1] &quot;sf&quot;         &quot;tbl_df&quot;     &quot;tbl&quot;        &quot;data.frame&quot;</span></span>
-<span id="cb17-3"><a href="#cb17-3"></a></span>
-<span id="cb17-4"><a href="#cb17-4"></a><span class="kw">plot</span>(vl_sf[,<span class="st">&quot;n_deaths&quot;</span>])</span></code></pre></div>
-<p><img src="data:image/png;base64,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" /><!-- --></p>
-<p>Although we have indicated in the query the attributes <code>division_name</code> and <code>region_name</code>, as can be seen in the figure, the result obtained is at the finest granularity level, in this case at the <code>division_name</code> level.</p>
-<p>Only the parts of the divisions made up of states where there is recorded data are shown. If we wanted to show the full extent of each division, we should have explicitly associated a layer at that level.</p>
+<p>The result is a vector layer that we can save, perform spatial
+analysis or queries on it, or we can see it as a map, using the
+functions associated with the <code>sf</code> class.</p>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a><span class="fu">class</span>(vl_sf)</span>
+<span id="cb17-2"><a href="#cb17-2" tabindex="-1"></a><span class="co">#&gt; [1] &quot;sf&quot;         &quot;tbl_df&quot;     &quot;tbl&quot;        &quot;data.frame&quot;</span></span>
+<span id="cb17-3"><a href="#cb17-3" tabindex="-1"></a></span>
+<span id="cb17-4"><a href="#cb17-4" tabindex="-1"></a><span class="fu">plot</span>(vl_sf[,<span class="st">&quot;n_deaths&quot;</span>])</span></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p>Although we have indicated in the query the attributes
+<code>division_name</code> and <code>region_name</code>, as can be seen
+in the figure, the result obtained is at the finest granularity level,
+in this case at the <code>division_name</code> level.</p>
+<p>Only the parts of the divisions made up of states where there is
+recorded data are shown. If we wanted to show the full extent of each
+division, we should have explicitly associated a layer at that
+level.</p>
 </div>
 <div id="get-wide-tables" class="section level2">
 <h2>Get wide tables</h2>
-<p>In geographic layers, geographic objects usually are not repeated. The tables are wide: for each object the rest of the attributes are defined as columns. By means of the parameter <code>wider</code> we can indicate that we want a result of this type.</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1"></a>vl_sf_w &lt;-<span class="st"> </span>gdqr <span class="op">%&gt;%</span></span>
-<span id="cb18-2"><a href="#cb18-2"></a><span class="st">  </span><span class="kw">run_geoquery</span>(<span class="dt">wider =</span> <span class="ot">TRUE</span>)</span></code></pre></div>
+<p>In geographic layers, geographic objects usually are not repeated.
+The tables are wide: for each object the rest of the attributes are
+defined as columns. By means of the parameter <code>wider</code> we can
+indicate that we want a result of this type.</p>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a>vl_sf_w <span class="ot">&lt;-</span> gdqr <span class="sc">|&gt;</span></span>
+<span id="cb18-2"><a href="#cb18-2" tabindex="-1"></a>  <span class="fu">run_geoquery</span>(<span class="at">wider =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
 <p>The first rows of the result can be seen below in table form.</p>
-<table>
+<table style="width:100%;">
 <colgroup>
-<col width="1%"></col>
-<col width="1%"></col>
-<col width="5%"></col>
-<col width="3%"></col>
-<col width="3%"></col>
-<col width="3%"></col>
-<col width="3%"></col>
-<col width="2%"></col>
-<col width="2%"></col>
-<col width="2%"></col>
-<col width="9%"></col>
-<col width="9%"></col>
-<col width="9%"></col>
-<col width="4%"></col>
-<col width="4%"></col>
-<col width="4%"></col>
-<col width="6%"></col>
-<col width="6%"></col>
-<col width="6%"></col>
-<col width="8%"></col>
+<col width="1%" />
+<col width="1%" />
+<col width="4%" />
+<col width="3%" />
+<col width="3%" />
+<col width="3%" />
+<col width="3%" />
+<col width="2%" />
+<col width="2%" />
+<col width="2%" />
+<col width="10%" />
+<col width="10%" />
+<col width="10%" />
+<col width="6%" />
+<col width="6%" />
+<col width="6%" />
+<col width="5%" />
+<col width="5%" />
+<col width="5%" />
+<col width="7%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -971,12 +1052,12 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <th align="center">count_01</th>
 <th align="center">count_02</th>
 <th align="center">count_03</th>
-<th align="center">pneumonia_and_influenza_deaths_01</th>
-<th align="center">pneumonia_and_influenza_deaths_02</th>
-<th align="center">pneumonia_and_influenza_deaths_03</th>
-<th align="center">other_deaths_01</th>
-<th align="center">other_deaths_02</th>
-<th align="center">other_deaths_03</th>
+<th align="center">mrs_cause_pneumonia_and_influenza_deaths_01</th>
+<th align="center">mrs_cause_pneumonia_and_influenza_deaths_02</th>
+<th align="center">mrs_cause_pneumonia_and_influenza_deaths_03</th>
+<th align="center">mrs_cause_other_deaths_01</th>
+<th align="center">mrs_cause_other_deaths_02</th>
+<th align="center">mrs_cause_other_deaths_03</th>
 <th align="center">mrs_cause_nrow_agg_01</th>
 <th align="center">mrs_cause_nrow_agg_02</th>
 <th align="center">mrs_cause_nrow_agg_03</th>
@@ -1004,7 +1085,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <td align="center">16</td>
 <td align="center">16</td>
 <td align="center">16</td>
-<td align="center">MULTIPOLYGON (((-91.51 40.2…</td>
+<td align="center">MULTIPOLYGON (((-84.65 45.8…</td>
 </tr>
 <tr class="even">
 <td align="center">2</td>
@@ -1026,7 +1107,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <td align="center">7</td>
 <td align="center">7</td>
 <td align="center">7</td>
-<td align="center">MULTIPOLYGON (((-88.47 31.8…</td>
+<td align="center">MULTIPOLYGON (((-88.4 30.37…</td>
 </tr>
 <tr class="odd">
 <td align="center">3</td>
@@ -1048,7 +1129,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <td align="center">20</td>
 <td align="center">20</td>
 <td align="center">20</td>
-<td align="center">MULTIPOLYGON (((-75.56 39.6…</td>
+<td align="center">MULTIPOLYGON (((-72.03 41.2…</td>
 </tr>
 <tr class="even">
 <td align="center">4</td>
@@ -1070,7 +1151,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <td align="center">8</td>
 <td align="center">8</td>
 <td align="center">8</td>
-<td align="center">POLYGON ((-109.1 31.33, -11…</td>
+<td align="center">MULTIPOLYGON (((-109.1 41, …</td>
 </tr>
 <tr class="odd">
 <td align="center">5</td>
@@ -1092,7 +1173,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <td align="center">14</td>
 <td align="center">14</td>
 <td align="center">14</td>
-<td align="center">MULTIPOLYGON (((-71.63 41.1…</td>
+<td align="center">MULTIPOLYGON (((-71.59 41.1…</td>
 </tr>
 <tr class="even">
 <td align="center">6</td>
@@ -1114,7 +1195,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <td align="center">14</td>
 <td align="center">14</td>
 <td align="center">14</td>
-<td align="center">MULTIPOLYGON (((-156 19.78,…</td>
+<td align="center">MULTIPOLYGON (((-156.1 19.7…</td>
 </tr>
 <tr class="odd">
 <td align="center">7</td>
@@ -1158,7 +1239,7 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <td align="center">10</td>
 <td align="center">10</td>
 <td align="center">10</td>
-<td align="center">POLYGON ((-91.42 40.38, -91…</td>
+<td align="center">POLYGON ((-102 36.99, -94.6…</td>
 </tr>
 <tr class="odd">
 <td align="center">9</td>
@@ -1180,17 +1261,21 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <td align="center">13</td>
 <td align="center">13</td>
 <td align="center">13</td>
-<td align="center">POLYGON ((-91.17 33, -91.07…</td>
+<td align="center">POLYGON ((-106.6 31.87, -10…</td>
 </tr>
 </tbody>
 </table>
-<p>We can see that the attributes that are multivalued for each geographic object have been eliminated from the result table, and new measurement columns have been generated: one for each combination of values of these attributes with the original measurements.</p>
-<p>The meaning of the name of the columns of the measurements is part of the result obtained, also in table format, as can be seen below.</p>
+<p>We can see that the attributes that are multivalued for each
+geographic object have been eliminated from the result table, and new
+measurement columns have been generated: one for each combination of
+values of these attributes with the original measurements.</p>
+<p>The meaning of the name of the columns of the measurements is part of
+the result obtained, also in table format, as can be seen below.</p>
 <table>
 <colgroup>
-<col width="47%"></col>
-<col width="43%"></col>
-<col width="9%"></col>
+<col width="47%" />
+<col width="44%" />
+<col width="7%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -1231,55 +1316,78 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 <td align="center">03</td>
 </tr>
 <tr class="odd">
-<td align="center">pneumonia_and_influenza_deaths_01</td>
-<td align="center">pneumonia_and_influenza_deaths</td>
+<td align="center">mrs_cause_pneumonia_and_influenza_deaths_01</td>
+<td align="center">mrs_cause_pneumonia_and_influenza_deaths</td>
 <td align="center">01</td>
 </tr>
 <tr class="even">
-<td align="center">pneumonia_and_influenza_deaths_02</td>
-<td align="center">pneumonia_and_influenza_deaths</td>
+<td align="center">mrs_cause_pneumonia_and_influenza_deaths_02</td>
+<td align="center">mrs_cause_pneumonia_and_influenza_deaths</td>
 <td align="center">02</td>
 </tr>
 <tr class="odd">
-<td align="center">pneumonia_and_influenza_deaths_03</td>
-<td align="center">pneumonia_and_influenza_deaths</td>
+<td align="center">mrs_cause_pneumonia_and_influenza_deaths_03</td>
+<td align="center">mrs_cause_pneumonia_and_influenza_deaths</td>
 <td align="center">03</td>
 </tr>
 <tr class="even">
-<td align="center">other_deaths_01</td>
-<td align="center">other_deaths</td>
+<td align="center">mrs_cause_other_deaths_01</td>
+<td align="center">mrs_cause_other_deaths</td>
 <td align="center">01</td>
 </tr>
 <tr class="odd">
-<td align="center">other_deaths_02</td>
-<td align="center">other_deaths</td>
+<td align="center">mrs_cause_other_deaths_02</td>
+<td align="center">mrs_cause_other_deaths</td>
 <td align="center">02</td>
 </tr>
 <tr class="even">
-<td align="center">other_deaths_03</td>
-<td align="center">other_deaths</td>
+<td align="center">mrs_cause_other_deaths_03</td>
+<td align="center">mrs_cause_other_deaths</td>
 <td align="center">03</td>
 </tr>
 </tbody>
 </table>
-<p>In this case there was only one variable with a multiplicity greater than one. If there were more variables in this situation, they would be added to this table in the same way.</p>
-<p>This dictionary table and layer structure can be saved in <em>GeoPackage</em> format using the <code>save_as_geopackage</code> function.</p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1"></a><span class="kw">save_as_geopackage</span>(vl_sf_w, <span class="st">&quot;division&quot;</span>)</span></code></pre></div>
-<p>The GeoPackages thus obtained can be used directly, for example in <em>QGIS</em>.</p>
+<p>In this case there was only one variable with a multiplicity greater
+than one. If there were more variables in this situation, they would be
+added to this table in the same way.</p>
+<p>This dictionary table and layer structure can be saved in
+<em>GeoPackage</em> format using the <code>save_as_geopackage</code>
+function.</p>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a><span class="fu">save_as_geopackage</span>(vl_sf_w, <span class="st">&quot;division&quot;</span>)</span></code></pre></div>
+<p>The GeoPackages thus obtained can be used directly, for example in
+<em>QGIS</em>.</p>
 </div>
 </div>
 <div id="conclusions" class="section level1">
 <h1>Conclusions</h1>
-<p>To generate the multidimensional structure on which to define queries, we can use the functions of the <a href="https://CRAN.R-project.org/package=starschemar"><code>starschemar</code></a> package or, if we already have the multidimensional design implemented, the import functions included in this package.</p>
-<p><code>geomultistar</code> package allows generating vector layers in <code>sf</code> format as a result of multidimensional queries. To do this, all we need is to associate vector layers with some of the attributes of the geographic dimensions, so that the layers associated with the rest of the attributes can be obtained automatically. Queries do not present any additional difficulties due to the fact of returning geographic data.</p>
-<p>The data obtained can be processed with the <code>sf</code> package to define spatial queries or analysis, be presented in maps or saved as a file to be used by a GIS (<em>Geographical Information System</em>).</p>
+<p>To generate the multidimensional structure on which to define
+queries, we can use the functions of the <a href="https://CRAN.R-project.org/package=starschemar"><code>starschemar</code></a>
+package or, if we already have the multidimensional design implemented,
+the import functions included in this package.</p>
+<p><code>geomultistar</code> package allows generating vector layers in
+<code>sf</code> format as a result of multidimensional queries. To do
+this, all we need is to associate vector layers with some of the
+attributes of the geographic dimensions, so that the layers associated
+with the rest of the attributes can be obtained automatically. Queries
+do not present any additional difficulties due to the fact of returning
+geographic data.</p>
+<p>The data obtained can be processed with the <code>sf</code> package
+to define spatial queries or analysis, be presented in maps or saved as
+a file to be used by a GIS (<em>Geographical Information
+System</em>).</p>
 </div>
-<div class="footnotes">
+<div class="footnotes footnotes-end-of-document">
 <hr />
 <ol>
-<li id="fn1"><p>Basic concepts of dimensional modelling and star schemas are presented in <a href="https://CRAN.R-project.org/package=starschemar"><code>starschemar</code></a> vignettes.<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
-<li id="fn2"><p>It is appropriate to use <code>city</code> and <code>state</code> to establish the relationship because the granularity of the data is <code>city</code> and there can be repeated city names in different states.<a href="#fnref2" class="footnote-back">↩︎</a></p></li>
-<li id="fn3"><p>If we are not going to use them in queries it is not necessary that they have the associated layer.<a href="#fnref3" class="footnote-back">↩︎</a></p></li>
+<li id="fn1"><p>Basic concepts of dimensional modelling and star schemas
+are presented in <a href="https://CRAN.R-project.org/package=starschemar"><code>starschemar</code></a>
+vignettes.<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
+<li id="fn2"><p>It is appropriate to use <code>city</code> and
+<code>state</code> to establish the relationship because the granularity
+of the data is <code>city</code> and there can be repeated city names in
+different states.<a href="#fnref2" class="footnote-back">↩︎</a></p></li>
+<li id="fn3"><p>If we are not going to use them in queries it is not
+necessary that they have the associated layer.<a href="#fnref3" class="footnote-back">↩︎</a></p></li>
 </ol>
 </div>
 
