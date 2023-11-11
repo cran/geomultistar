@@ -376,12 +376,13 @@ with conclusions.</p>
 <div id="an-illustrative-example" class="section level1">
 <h1>An illustrative example</h1>
 <p>To perform multidimensional queries, the <code>multistar</code> class
-was defined in the <a href="https://CRAN.R-project.org/package=starschemar"><code>starschemar</code></a>
-package. A <code>multistar</code> implements the star schemas: it has a
-table for each dimension and a table for the facts; however, it can
-contain multiple fact tables with some dimensions in common.</p>
-<p>Using the functions defined in <code>starschemar</code> package,
-starting from a flat table implemented by means of a
+was defined in this package. A <code>multistar</code> implements star
+schemas: it has a table for each dimension and a table for the facts;
+however, it can contain multiple fact tables with some dimensions in
+common.</p>
+<p>Using the functions defined in the <a href="https://CRAN.R-project.org/package=rolap"><code>rolap</code></a>
+or <a href="https://CRAN.R-project.org/package=starschemar"><code>starschemar</code></a>
+packages, starting from a flat table implemented by means of a
 <code>tibble</code>, we can generate a <code>multistar</code>
 object.</p>
 <p>If we already have a star schema, <code>geomultistar</code> package
@@ -393,9 +394,8 @@ fact and dimension tables in <code>tibble</code> format.</p>
 and dimensions in <code>tibble</code> format, which we have imported
 into R. In particular, we have the tables <code>mrs_fact_age</code>,
 <code>mrs_fact_cause</code>, <code>mrs_where</code>,
-<code>mrs_when</code> and <code>mrs_who</code>, obtained from the
-example presented in package <code>starschemar</code>: Two fact tables
-that share two of the three dimensions.</p>
+<code>mrs_when</code> and <code>mrs_who</code>: Two fact tables that
+share two of the three dimensions.</p>
 <div id="add-fact-tables" class="section level3">
 <h3>Add fact tables</h3>
 <p>We create an empty object, to which we will add elements. First we
@@ -410,11 +410,11 @@ fact tables.</p>
 <span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a>  ) </span></code></pre></div>
 <p>For the facts we indicate a name, the table that contains its data
 and the names of the columns that contain the measures.</p>
-<p>You can indicate an aggregation function associated with each
-measure. This parameter should be defined only if some measure is not
-additive. In this case it is not necessary.</p>
-<p>Finally, you can indicate the name of a field that represents the
-number of rows grouped in each query: You can indicate the name of an
+<p>We can indicate an aggregation function associated with each measure.
+This parameter should be defined only if some measure is not additive.
+In this case it is not necessary.</p>
+<p>Finally, we can indicate the name of a field that represents the
+number of rows grouped in each query: We can indicate the name of an
 existing column in the table for that purpose, or the name that you want
 to give to the column to be added if none exists. In this case, the name
 of a column in the table is assigned.</p>
@@ -474,8 +474,8 @@ relationships can be defined, as we will see next.</p>
 </div>
 <div id="relate-dimensions" class="section level3">
 <h3>Relate dimensions</h3>
-<p>Once a dimension is included in the <code>multistar</code>, we can
-relate it to other fact tables.</p>
+<p>Once a dimension is included in the <code>multistar</code> object, we
+can relate it to other fact tables.</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>ms <span class="ot">&lt;-</span> ms <span class="sc">|&gt;</span></span>
 <span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>  <span class="fu">relate_dimension</span>(<span class="at">dimension_name =</span> <span class="st">&quot;where&quot;</span>,</span>
 <span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>                   <span class="at">fact_name =</span> <span class="st">&quot;mrs_cause&quot;</span>,</span>
@@ -489,11 +489,10 @@ name.</p>
 <div id="additional-operations-on-the-multistar-object" class="section level3">
 <h3>Additional operations on the <code>multistar</code> object</h3>
 <p>Through the previous operations, we generate a <code>multistar</code>
-object to which we can apply the operations defined in the
-<code>starschemar</code> package for this class. At this moment we can
-export it as a flat table, using <code>multistar_as_flat_table</code>,
-or define multidimensional queries, as we will later use
-<code>dimensional_query</code>.</p>
+object to which we can apply the operations defined for this class. At
+this moment we can export it as a flat table, using
+<code>multistar_as_flat_table</code>, or define multidimensional
+queries, as we will later use <code>dimensional_query</code>.</p>
 </div>
 </div>
 <div id="define-geographic-dimensions-and-attributes" class="section level2">
@@ -508,8 +507,9 @@ contain geographic information. In the example only one dimension.</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>gms <span class="ot">&lt;-</span></span>
 <span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>  <span class="fu">geomultistar</span>(ms, <span class="at">geodimension =</span> <span class="st">&quot;where&quot;</span>)</span></code></pre></div>
 <p>For each attribute of a geographic dimension that we want to use in
-queries, we can define a vector layer with which a relationship can be
-established using one or more attributes of the dimension.</p>
+queries, we can define a vector geographic data layer with which a
+relationship can be established using one or more attributes of the
+dimension.</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>gms <span class="ot">&lt;-</span> gms <span class="sc">|&gt;</span></span>
 <span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>  <span class="fu">define_geoattribute</span>(</span>
 <span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>    <span class="at">attribute =</span> <span class="st">&quot;city&quot;</span>,</span>
@@ -517,9 +517,9 @@ established using one or more attributes of the dimension.</p>
 <span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>    <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;city&quot;</span> <span class="ot">=</span> <span class="st">&quot;city&quot;</span>, <span class="st">&quot;state&quot;</span> <span class="ot">=</span> <span class="st">&quot;state&quot;</span>)</span>
 <span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a>  ) </span></code></pre></div>
 <p>For the <code>city</code> attribute, a relationship is defined with a
-vector layer in <code>sf</code> format (<code>usa_cities</code>), using
-the <code>city</code> and <code>state</code> attributes<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a> that have the same
-name in the layer.</p>
+vector geographic data layer in <code>sf</code> format
+(<code>usa_cities</code>), using the <code>city</code> and
+<code>state</code> attributes<a href="#fn2" class="footnote-ref" id="fnref2"><sup>2</sup></a> that have the same name in the layer.</p>
 <p>Sometimes there may be problems establishing the correspondence
 between the geographic attributes and the vector layer: Instances may
 remain unrelated. To detect these situations, we can query the rows that
@@ -619,34 +619,31 @@ rest.</p>
 <div id="define-multidimensional-queries" class="section level2">
 <h2>Define multidimensional queries</h2>
 <p>Multidimensional queries are defined from a <code>multistar</code>
-object in the <code>starschemar</code> package. Since we are working
-with <code>geomultistar</code>, a specialization of
-<code>multistar</code>, we can use this object to define the query.</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a><span class="fu">library</span>(starschemar)</span>
-<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a></span>
-<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a>gdqr <span class="ot">&lt;-</span> <span class="fu">dimensional_query</span>(gms) <span class="sc">|&gt;</span></span>
-<span id="cb14-4"><a href="#cb14-4" tabindex="-1"></a>  <span class="fu">select_dimension</span>(<span class="at">name =</span> <span class="st">&quot;where&quot;</span>,</span>
-<span id="cb14-5"><a href="#cb14-5" tabindex="-1"></a>                   <span class="at">attributes =</span> <span class="fu">c</span>(<span class="st">&quot;division_name&quot;</span>, <span class="st">&quot;region_name&quot;</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb14-6"><a href="#cb14-6" tabindex="-1"></a>  <span class="fu">select_dimension</span>(<span class="at">name =</span> <span class="st">&quot;when&quot;</span>,</span>
-<span id="cb14-7"><a href="#cb14-7" tabindex="-1"></a>                   <span class="at">attributes =</span> <span class="fu">c</span>(<span class="st">&quot;year&quot;</span>, <span class="st">&quot;week&quot;</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb14-8"><a href="#cb14-8" tabindex="-1"></a>  <span class="fu">select_fact</span>(<span class="at">name =</span> <span class="st">&quot;mrs_age&quot;</span>,</span>
-<span id="cb14-9"><a href="#cb14-9" tabindex="-1"></a>              <span class="at">measures =</span> <span class="fu">c</span>(<span class="st">&quot;n_deaths&quot;</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb14-10"><a href="#cb14-10" tabindex="-1"></a>  <span class="fu">select_fact</span>(</span>
-<span id="cb14-11"><a href="#cb14-11" tabindex="-1"></a>    <span class="at">name =</span> <span class="st">&quot;mrs_cause&quot;</span>,</span>
-<span id="cb14-12"><a href="#cb14-12" tabindex="-1"></a>    <span class="at">measures =</span> <span class="fu">c</span>(<span class="st">&quot;pneumonia_and_influenza_deaths&quot;</span>, <span class="st">&quot;other_deaths&quot;</span>)</span>
-<span id="cb14-13"><a href="#cb14-13" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb14-14"><a href="#cb14-14" tabindex="-1"></a>  <span class="fu">filter_dimension</span>(<span class="at">name =</span> <span class="st">&quot;when&quot;</span>, week <span class="sc">&lt;=</span> <span class="st">&quot;03&quot;</span>)</span></code></pre></div>
-<p>The definition functions of this type of queries are quite intuitive,
-they are explained in the vignette of package <a href="https://CRAN.R-project.org/package=starschemar"><code>starschemar</code></a>.</p>
-<p>If we use the function <code>run_query</code> of the mentioned
-package, a normal multidimensional query is executed, as shown
-below.</p>
+object. Since we are working with <code>geomultistar</code>, a
+specialization of <code>multistar</code>, we can use this object to
+define the query.</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a>gdqr <span class="ot">&lt;-</span> <span class="fu">dimensional_query</span>(gms) <span class="sc">|&gt;</span></span>
+<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a>  <span class="fu">select_dimension</span>(<span class="at">name =</span> <span class="st">&quot;where&quot;</span>,</span>
+<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a>                   <span class="at">attributes =</span> <span class="fu">c</span>(<span class="st">&quot;division_name&quot;</span>, <span class="st">&quot;region_name&quot;</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb14-4"><a href="#cb14-4" tabindex="-1"></a>  <span class="fu">select_dimension</span>(<span class="at">name =</span> <span class="st">&quot;when&quot;</span>,</span>
+<span id="cb14-5"><a href="#cb14-5" tabindex="-1"></a>                   <span class="at">attributes =</span> <span class="fu">c</span>(<span class="st">&quot;year&quot;</span>, <span class="st">&quot;week&quot;</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb14-6"><a href="#cb14-6" tabindex="-1"></a>  <span class="fu">select_fact</span>(<span class="at">name =</span> <span class="st">&quot;mrs_age&quot;</span>,</span>
+<span id="cb14-7"><a href="#cb14-7" tabindex="-1"></a>              <span class="at">measures =</span> <span class="fu">c</span>(<span class="st">&quot;n_deaths&quot;</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb14-8"><a href="#cb14-8" tabindex="-1"></a>  <span class="fu">select_fact</span>(</span>
+<span id="cb14-9"><a href="#cb14-9" tabindex="-1"></a>    <span class="at">name =</span> <span class="st">&quot;mrs_cause&quot;</span>,</span>
+<span id="cb14-10"><a href="#cb14-10" tabindex="-1"></a>    <span class="at">measures =</span> <span class="fu">c</span>(<span class="st">&quot;pneumonia_and_influenza_deaths&quot;</span>, <span class="st">&quot;other_deaths&quot;</span>)</span>
+<span id="cb14-11"><a href="#cb14-11" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
+<span id="cb14-12"><a href="#cb14-12" tabindex="-1"></a>  <span class="fu">filter_dimension</span>(<span class="at">name =</span> <span class="st">&quot;when&quot;</span>, week <span class="sc">&lt;=</span> <span class="st">&quot;03&quot;</span>)</span></code></pre></div>
+<p>The definition functions of this type of queries is based on the
+selection of facts and dimensions, and the filter of dimensions.</p>
+<p>If we use the function <code>run_query()</code>, a multidimensional
+query is executed, as shown below.</p>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a>ft <span class="ot">&lt;-</span> gdqr <span class="sc">|&gt;</span></span>
 <span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a>  <span class="fu">run_query</span>() <span class="sc">|&gt;</span></span>
 <span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a>  <span class="fu">multistar_as_flat_table</span>()</span></code></pre></div>
 <p>The result of this type of query is a <code>multistar</code> object,
 which we can transform into a flat table to display it more easily, as
-we do below for the first rows..</p>
+we do below for the first rows.</p>
 <table style="width:100%;">
 <colgroup>
 <col width="4%" />
@@ -811,8 +808,8 @@ we do below for the first rows..</p>
 <div id="run-queries-adding-geographic-information" class="section level2">
 <h2>Run queries adding geographic information</h2>
 <p>If instead of executing the standard query, we execute
-<code>run_geoquery</code> function, from this package, we automatically
-obtain a vector layer at the finest possible level of detail, depending
+<code>run_geoquery()</code> function, we automatically obtain a vector
+geographic data layer at the finest possible level of detail, depending
 on the definition of the query.</p>
 <div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a>vl_sf <span class="ot">&lt;-</span> gdqr <span class="sc">|&gt;</span></span>
 <span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a>  <span class="fu">run_geoquery</span>()</span></code></pre></div>
@@ -991,9 +988,9 @@ on the definition of the query.</p>
 </tr>
 </tbody>
 </table>
-<p>The result is a vector layer that we can save, perform spatial
-analysis or queries on it, or we can see it as a map, using the
-functions associated with the <code>sf</code> class.</p>
+<p>The result is a vector geographic data layer that we can save,
+perform spatial analysis or queries on it, or we can see it as a map,
+using the functions associated with the <code>sf</code> class.</p>
 <div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a><span class="fu">class</span>(vl_sf)</span>
 <span id="cb17-2"><a href="#cb17-2" tabindex="-1"></a><span class="co">#&gt; [1] &quot;sf&quot;         &quot;tbl_df&quot;     &quot;tbl&quot;        &quot;data.frame&quot;</span></span>
 <span id="cb17-3"><a href="#cb17-3" tabindex="-1"></a></span>
@@ -1350,37 +1347,38 @@ the result obtained, also in table format, as can be seen below.</p>
 <p>In this case there was only one variable with a multiplicity greater
 than one. If there were more variables in this situation, they would be
 added to this table in the same way.</p>
-<p>This dictionary table and layer structure can be saved in
-<em>GeoPackage</em> format using the <code>save_as_geopackage</code>
+<p>This data dictionary table and layer structure can be saved in
+<em>GeoPackage</em> format using the <code>save_as_geopackage()</code>
 function.</p>
 <div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a><span class="fu">save_as_geopackage</span>(vl_sf_w, <span class="st">&quot;division&quot;</span>)</span></code></pre></div>
-<p>The GeoPackages thus obtained can be used directly, for example in
-<em>QGIS</em>.</p>
+<p>The <em>GeoPackages</em> thus obtained can be used directly, for
+example in <em>QGIS</em>.</p>
 </div>
 </div>
 <div id="conclusions" class="section level1">
 <h1>Conclusions</h1>
 <p>To generate the multidimensional structure on which to define
-queries, we can use the functions of the <a href="https://CRAN.R-project.org/package=starschemar"><code>starschemar</code></a>
+queries, we can use the functions of the <a href="https://CRAN.R-project.org/package=rolap"><code>rolap</code></a>
 package or, if we already have the multidimensional design implemented,
 the import functions included in this package.</p>
-<p><code>geomultistar</code> package allows generating vector layers in
-<code>sf</code> format as a result of multidimensional queries. To do
-this, all we need is to associate vector layers with some of the
-attributes of the geographic dimensions, so that the layers associated
-with the rest of the attributes can be obtained automatically. Queries
-do not present any additional difficulties due to the fact of returning
-geographic data.</p>
+<p>The <code>geomultistar</code> package allows generating vector
+geographic data layers in <code>sf</code> format as a result of
+multidimensional queries. To do this, all we need is to associate vector
+geographic data layers with some of the attributes of the geographic
+dimensions, so that the layers associated with the rest of the
+attributes can be obtained automatically. Queries do not present any
+additional difficulties due to the fact of returning geographic
+data.</p>
 <p>The data obtained can be processed with the <code>sf</code> package
 to define spatial queries or analysis, be presented in maps or saved as
-a file to be used by a GIS (<em>Geographical Information
-System</em>).</p>
+a file to be used by a GIS (<em>Geographical Information System</em>)
+tool.</p>
 </div>
 <div class="footnotes footnotes-end-of-document">
 <hr />
 <ol>
 <li id="fn1"><p>Basic concepts of dimensional modelling and star schemas
-are presented in <a href="https://CRAN.R-project.org/package=starschemar"><code>starschemar</code></a>
+are presented in <a href="https://CRAN.R-project.org/package=rolap">`rolap``</a>
 vignettes.<a href="#fnref1" class="footnote-back">↩︎</a></p></li>
 <li id="fn2"><p>It is appropriate to use <code>city</code> and
 <code>state</code> to establish the relationship because the granularity

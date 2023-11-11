@@ -116,8 +116,6 @@ gms <- gms |>
   define_geoattribute(from_attribute = "state")
 
 ## -----------------------------------------------------------------------------
-library(starschemar)
-
 gdqr <- dimensional_query(gms) |>
   select_dimension(name = "where",
                    attributes = c("division_name", "region_name")) |>
