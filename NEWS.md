@@ -1,3 +1,8 @@
+# geomultistar 1.2.1
+* Fix select measure in facts.
+* Modify the cph field of the description.
+* Include logo on website.
+
 # geomultistar 1.2.0
 * Define error messages.
 * Include `multistar` class code to be independent of the `starschemar` package.

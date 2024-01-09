@@ -12,9 +12,8 @@
 
 <meta name="author" content="Jose Samos (jsamos@ugr.es)" />
 
-<meta name="date" content="2020-09-15" />
 
-<title>Geographical Queries on Multidimensional Data</title>
+<title>Queries on Multidimensional Data Enriched with Geographic Information</title>
 
 <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
 // be compatible with the behavior of Pandoc < 2.8).
@@ -338,10 +337,10 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 
 
-<h1 class="title toc-ignore">Geographical Queries on Multidimensional
-Data</h1>
+<h1 class="title toc-ignore">Queries on Multidimensional Data Enriched
+with Geographic Information</h1>
 <h4 class="author">Jose Samos (<a href="mailto:jsamos@ugr.es" class="email">jsamos@ugr.es</a>)</h4>
-<h4 class="date">2020-09-15</h4>
+<h4 class="date">2020-09-15 (updated 2023-11-10)</h4>
 
 
 
@@ -369,25 +368,36 @@ geographic data</strong>. In other words, it is not a question of making
 spatial queries but of generating a spatial layer with the result of the
 multidimensional queries and that this generation is done automatically,
 once the configuration of the geographical dimensions has been made.</p>
-<p>The rest of this document is structured as follows: An illustrative
-example of how the package works is presented. Then, the document ends
-with conclusions.</p>
+<p>The rest of this document is structured as follows: First we show
+various ways to obtain a <code>multistar</code> object. Afterwards, the
+functions that allow us to define multidimensional queries are
+presented. The following section shows how to add geographic information
+to the model and also how to include it in the results of
+multidimensional queries. Then, the document ends with conclusions.</p>
 </div>
-<div id="an-illustrative-example" class="section level1">
-<h1>An illustrative example</h1>
+<div id="get-a-multistar-object" class="section level1">
+<h1>Get a <code>multistar</code> object</h1>
 <p>To perform multidimensional queries, the <code>multistar</code> class
 was defined in this package. A <code>multistar</code> implements star
 schemas: it has a table for each dimension and a table for the facts;
 however, it can contain multiple fact tables with some dimensions in
 common.</p>
 <p>Using the functions defined in the <a href="https://CRAN.R-project.org/package=rolap"><code>rolap</code></a>
-or <a href="https://CRAN.R-project.org/package=starschemar"><code>starschemar</code></a>
-packages, starting from a flat table implemented by means of a
-<code>tibble</code>, we can generate a <code>multistar</code>
-object.</p>
+package, starting from a flat table implemented by means of a
+<code>tibble</code>, we can generate a star database from which we can
+directly obtain a <code>multistar</code> object.</p>
 <p>If we already have a star schema, <code>geomultistar</code> package
 offers functions to generate a <code>multistar</code> object from the
 fact and dimension tables in <code>tibble</code> format.</p>
+<div id="get-a-multistar-object-from-the-rolap-package" class="section level2">
+<h2>Get a <code>multistar</code> object from the <code>rolap</code>
+package</h2>
+<p>The <code>rolap</code> package allows us to obtain a multidimensional
+database from one or more flat tables.</p>
+<p>Using the <code>as_multistar()</code> function of this package, we
+obtain an object of class <code>multistar</code> that we can work with
+directly using the <code>geomultistar</code> package.</p>
+</div>
 <div id="generate-a-multistar-object" class="section level2">
 <h2>Generate a <code>multistar</code> object</h2>
 <p>In this case, we are going to suppose that we have tables of facts
@@ -495,6 +505,185 @@ this moment we can export it as a flat table, using
 queries, as we will later use <code>dimensional_query</code>.</p>
 </div>
 </div>
+</div>
+<div id="geomultistar-query-functions" class="section level1">
+<h1><code>geomultistar</code> query functions</h1>
+<p>A query is defined on a <code>multistar</code> object and the result
+is another <code>multistar</code> object.</p>
+<p>This section presents the functions available to define queries.</p>
+<div id="dimensional_query" class="section level2">
+<h2><code>dimensional_query()</code></h2>
+<p>From a <code>multistar</code> object, an empty
+<code>dimensional_query</code> object is created where we can select
+fact measures, dimension attributes and filter dimension rows.</p>
+<p>Example:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>dq <span class="ot">&lt;-</span> <span class="fu">dimensional_query</span>(ms)</span></code></pre></div>
+</div>
+<div id="select_fact" class="section level2">
+<h2><code>select_fact()</code></h2>
+<p>To define the fact table to be consulted, its name is indicated,
+optionally, a vector of names of selected measures and another of
+aggregation functions are also indicated. If the name of any measure is
+not indicated, only the one corresponding to the number of aggregated
+rows is included, which is always included. If no aggregation function
+is included, those defined for the measures are considered.</p>
+<p>Examples:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>dq_1 <span class="ot">&lt;-</span> dq <span class="sc">|&gt;</span></span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>  <span class="fu">select_fact</span>(</span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>    <span class="at">name =</span> <span class="st">&quot;mrs_age&quot;</span>,</span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>    <span class="at">measures =</span> <span class="st">&quot;n_deaths&quot;</span>,</span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>    <span class="at">agg_functions =</span> <span class="st">&quot;MAX&quot;</span></span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a>  )</span></code></pre></div>
+<p>The measure is considered with the indicated aggregation function. In
+addition, the measure corresponding to the number of grouped records
+that make up the result is automatically included.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>dq_2 <span class="ot">&lt;-</span> dq <span class="sc">|&gt;</span></span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>  <span class="fu">select_fact</span>(<span class="at">name =</span> <span class="st">&quot;mrs_age&quot;</span>,</span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>              <span class="at">measures =</span> <span class="st">&quot;n_deaths&quot;</span>)</span></code></pre></div>
+<p>The measure is considered with the aggregation function defined in
+the multidimensional scheme.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>dq_3 <span class="ot">&lt;-</span> dq <span class="sc">|&gt;</span></span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>  <span class="fu">select_fact</span>(<span class="at">name =</span> <span class="st">&quot;mrs_age&quot;</span>)</span></code></pre></div>
+<p>Only the measure corresponding to the number of grouped records is
+included.</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a>dq_4 <span class="ot">&lt;-</span> dq <span class="sc">|&gt;</span></span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>  <span class="fu">select_fact</span>(<span class="at">name =</span> <span class="st">&quot;mrs_age&quot;</span>,</span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a>              <span class="at">measures =</span> <span class="st">&quot;n_deaths&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a>  <span class="fu">select_fact</span>(<span class="at">name =</span> <span class="st">&quot;mrs_cause&quot;</span>)</span></code></pre></div>
+<p>More than one fact table can be selected in a query.</p>
+</div>
+<div id="select_dimension" class="section level2">
+<h2><code>select_dimension()</code></h2>
+<p>To include a dimension in a <code>dimensional_query</code> object, we
+have to define its name and a subset of the dimension attributes. If
+only the name of the dimension is indicated, it is considered that all
+its attributes should be added.</p>
+<p>Example:</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a>dq_1 <span class="ot">&lt;-</span> dq <span class="sc">|&gt;</span></span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a>  <span class="fu">select_dimension</span>(<span class="at">name =</span> <span class="st">&quot;where&quot;</span>,</span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a>                   <span class="at">attributes =</span> <span class="fu">c</span>(<span class="st">&quot;city&quot;</span>, <span class="st">&quot;state&quot;</span>))</span></code></pre></div>
+<p>Only the indicated attributes of the dimension will be included.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a>dq_2 <span class="ot">&lt;-</span> dq <span class="sc">|&gt;</span></span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a>  <span class="fu">select_dimension</span>(<span class="at">name =</span> <span class="st">&quot;where&quot;</span>)</span></code></pre></div>
+<p>All attributes of the dimension will be included.</p>
+</div>
+<div id="filter_dimension" class="section level2">
+<h2><code>filter_dimension()</code></h2>
+<p>Allows us to define selection conditions for dimension rows.
+Conditions can be defined on any attribute of the dimension, not only on
+attributes selected in the query for the dimension. The selection is
+made based on the function <code>dplyr::filter()</code>. Conditions are
+defined in exactly the same way as in that function.</p>
+<p>Example:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a>dq <span class="ot">&lt;-</span> dq <span class="sc">|&gt;</span></span>
+<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a>  <span class="fu">filter_dimension</span>(<span class="at">name =</span> <span class="st">&quot;when&quot;</span>, week <span class="sc">&lt;=</span> <span class="st">&quot;03&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb13-3"><a href="#cb13-3" tabindex="-1"></a>  <span class="fu">filter_dimension</span>(<span class="at">name =</span> <span class="st">&quot;where&quot;</span>, city <span class="sc">==</span> <span class="st">&quot;Bridgeport&quot;</span>)</span></code></pre></div>
+</div>
+<div id="run_query" class="section level2">
+<h2><code>run_query()</code></h2>
+<p>Once we have selected the facts, dimensions and defined the
+conditions on the instances, we can execute the query to obtain the
+result.</p>
+<p>Example:</p>
+<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a>dq <span class="ot">&lt;-</span> <span class="fu">dimensional_query</span>(ms) <span class="sc">|&gt;</span></span>
+<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a>  <span class="fu">select_dimension</span>(<span class="at">name =</span> <span class="st">&quot;where&quot;</span>,</span>
+<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a>                   <span class="at">attributes =</span> <span class="fu">c</span>(<span class="st">&quot;division_name&quot;</span>, <span class="st">&quot;region_name&quot;</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb14-4"><a href="#cb14-4" tabindex="-1"></a>  <span class="fu">select_dimension</span>(<span class="at">name =</span> <span class="st">&quot;when&quot;</span>,</span>
+<span id="cb14-5"><a href="#cb14-5" tabindex="-1"></a>                   <span class="at">attributes =</span> <span class="fu">c</span>(<span class="st">&quot;year&quot;</span>, <span class="st">&quot;week&quot;</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb14-6"><a href="#cb14-6" tabindex="-1"></a>  <span class="fu">select_fact</span>(<span class="at">name =</span> <span class="st">&quot;mrs_age&quot;</span>,</span>
+<span id="cb14-7"><a href="#cb14-7" tabindex="-1"></a>              <span class="at">measures =</span> <span class="st">&quot;n_deaths&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb14-8"><a href="#cb14-8" tabindex="-1"></a>  <span class="fu">filter_dimension</span>(<span class="at">name =</span> <span class="st">&quot;when&quot;</span>, week <span class="sc">&lt;=</span> <span class="st">&quot;03&quot;</span>)</span>
+<span id="cb14-9"><a href="#cb14-9" tabindex="-1"></a></span>
+<span id="cb14-10"><a href="#cb14-10" tabindex="-1"></a>ms_2 <span class="ot">&lt;-</span> dq <span class="sc">|&gt;</span></span>
+<span id="cb14-11"><a href="#cb14-11" tabindex="-1"></a>  <span class="fu">run_query</span>()</span>
+<span id="cb14-12"><a href="#cb14-12" tabindex="-1"></a></span>
+<span id="cb14-13"><a href="#cb14-13" tabindex="-1"></a><span class="fu">class</span>(ms_2)</span>
+<span id="cb14-14"><a href="#cb14-14" tabindex="-1"></a><span class="co">#&gt; [1] &quot;multistar&quot;</span></span></code></pre></div>
+<p>The result of a query is an object of the <code>multistar</code>
+class that meets the defined conditions. Other queries can continue to
+be defined on this object.</p>
+<p>In this case we transform it into a flat table to more easily show
+the result.</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a>ft <span class="ot">&lt;-</span> ms_2 <span class="sc">|&gt;</span></span>
+<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a>  <span class="fu">multistar_as_flat_table</span>()</span></code></pre></div>
+<p>Below are the first rows of the result.</p>
+<table style="width:94%;">
+<colgroup>
+<col width="9%" />
+<col width="9%" />
+<col width="29%" />
+<col width="19%" />
+<col width="15%" />
+<col width="11%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="center">year</th>
+<th align="center">week</th>
+<th align="center">division_name</th>
+<th align="center">region_name</th>
+<th align="center">n_deaths</th>
+<th align="center">count</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="center">1962</td>
+<td align="center">01</td>
+<td align="center">East North Central</td>
+<td align="center">Midwest</td>
+<td align="center">2258</td>
+<td align="center">75</td>
+</tr>
+<tr class="even">
+<td align="center">1962</td>
+<td align="center">01</td>
+<td align="center">East South Central</td>
+<td align="center">South</td>
+<td align="center">526</td>
+<td align="center">35</td>
+</tr>
+<tr class="odd">
+<td align="center">1962</td>
+<td align="center">01</td>
+<td align="center">Middle Atlantic</td>
+<td align="center">Northeast</td>
+<td align="center">3452</td>
+<td align="center">86</td>
+</tr>
+<tr class="even">
+<td align="center">1962</td>
+<td align="center">01</td>
+<td align="center">Mountain</td>
+<td align="center">West</td>
+<td align="center">414</td>
+<td align="center">35</td>
+</tr>
+<tr class="odd">
+<td align="center">1962</td>
+<td align="center">01</td>
+<td align="center">New England</td>
+<td align="center">Northeast</td>
+<td align="center">785</td>
+<td align="center">57</td>
+</tr>
+<tr class="even">
+<td align="center">1962</td>
+<td align="center">01</td>
+<td align="center">Pacific</td>
+<td align="center">West</td>
+<td align="center">1567</td>
+<td align="center">67</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="add-geographic-information" class="section level1">
+<h1>Add geographic information</h1>
+<p>Both the multidimensional data model and multidimensional queries can
+be enriched with geographic information. This is what we are going to do
+in this section.</p>
 <div id="define-geographic-dimensions-and-attributes" class="section level2">
 <h2>Define geographic dimensions and attributes</h2>
 <p>To define the dimensions and geographic attributes of a
@@ -504,18 +693,18 @@ this information.</p>
 <p>We create a <code>geomultistar</code> object from a
 <code>multistar</code> one defining the names of the dimensions that
 contain geographic information. In the example only one dimension.</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>gms <span class="ot">&lt;-</span></span>
-<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>  <span class="fu">geomultistar</span>(ms, <span class="at">geodimension =</span> <span class="st">&quot;where&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a>gms <span class="ot">&lt;-</span></span>
+<span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a>  <span class="fu">geomultistar</span>(ms, <span class="at">geodimension =</span> <span class="st">&quot;where&quot;</span>)</span></code></pre></div>
 <p>For each attribute of a geographic dimension that we want to use in
 queries, we can define a vector geographic data layer with which a
 relationship can be established using one or more attributes of the
 dimension.</p>
-<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a>gms <span class="ot">&lt;-</span> gms <span class="sc">|&gt;</span></span>
-<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>  <span class="fu">define_geoattribute</span>(</span>
-<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>    <span class="at">attribute =</span> <span class="st">&quot;city&quot;</span>,</span>
-<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>    <span class="at">from_layer =</span> usa_cities,</span>
-<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>    <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;city&quot;</span> <span class="ot">=</span> <span class="st">&quot;city&quot;</span>, <span class="st">&quot;state&quot;</span> <span class="ot">=</span> <span class="st">&quot;state&quot;</span>)</span>
-<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a>  ) </span></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a>gms <span class="ot">&lt;-</span> gms <span class="sc">|&gt;</span></span>
+<span id="cb17-2"><a href="#cb17-2" tabindex="-1"></a>  <span class="fu">define_geoattribute</span>(</span>
+<span id="cb17-3"><a href="#cb17-3" tabindex="-1"></a>    <span class="at">attribute =</span> <span class="st">&quot;city&quot;</span>,</span>
+<span id="cb17-4"><a href="#cb17-4" tabindex="-1"></a>    <span class="at">from_layer =</span> usa_cities,</span>
+<span id="cb17-5"><a href="#cb17-5" tabindex="-1"></a>    <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;city&quot;</span> <span class="ot">=</span> <span class="st">&quot;city&quot;</span>, <span class="st">&quot;state&quot;</span> <span class="ot">=</span> <span class="st">&quot;state&quot;</span>)</span>
+<span id="cb17-6"><a href="#cb17-6" tabindex="-1"></a>  ) </span></code></pre></div>
 <p>For the <code>city</code> attribute, a relationship is defined with a
 vector geographic data layer in <code>sf</code> format
 (<code>usa_cities</code>), using the <code>city</code> and
@@ -524,8 +713,8 @@ vector geographic data layer in <code>sf</code> format
 between the geographic attributes and the vector layer: Instances may
 remain unrelated. To detect these situations, we can query the rows that
 do not have associated geometry using the following function.</p>
-<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>empty_city <span class="ot">&lt;-</span> gms <span class="sc">|&gt;</span></span>
-<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>  <span class="fu">get_empty_geoinstances</span>(<span class="at">attribute =</span> <span class="st">&quot;city&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a>empty_city <span class="ot">&lt;-</span> gms <span class="sc">|&gt;</span></span>
+<span id="cb18-2"><a href="#cb18-2" tabindex="-1"></a>  <span class="fu">get_empty_geoinstances</span>(<span class="at">attribute =</span> <span class="st">&quot;city&quot;</span>)</span></code></pre></div>
 <p>The result obtained is shown below.</p>
 <table style="width:65%;">
 <colgroup>
@@ -553,15 +742,15 @@ determined. There may be several because other geographic data of less
 granularity may be known.</p>
 <p>In the same way, the relationship for <code>county</code> with the
 corresponding layer (<code>usa_counties</code>) is defined.</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>gms <span class="ot">&lt;-</span> gms <span class="sc">|&gt;</span></span>
-<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>  <span class="fu">define_geoattribute</span>(</span>
-<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>    <span class="at">attribute =</span> <span class="st">&quot;county&quot;</span>,</span>
-<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a>    <span class="at">from_layer =</span> usa_counties,</span>
-<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a>    <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;county&quot;</span> <span class="ot">=</span> <span class="st">&quot;county&quot;</span>, <span class="st">&quot;state&quot;</span> <span class="ot">=</span> <span class="st">&quot;state&quot;</span>)</span>
-<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a>  )  </span></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a>gms <span class="ot">&lt;-</span> gms <span class="sc">|&gt;</span></span>
+<span id="cb19-2"><a href="#cb19-2" tabindex="-1"></a>  <span class="fu">define_geoattribute</span>(</span>
+<span id="cb19-3"><a href="#cb19-3" tabindex="-1"></a>    <span class="at">attribute =</span> <span class="st">&quot;county&quot;</span>,</span>
+<span id="cb19-4"><a href="#cb19-4" tabindex="-1"></a>    <span class="at">from_layer =</span> usa_counties,</span>
+<span id="cb19-5"><a href="#cb19-5" tabindex="-1"></a>    <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;county&quot;</span> <span class="ot">=</span> <span class="st">&quot;county&quot;</span>, <span class="st">&quot;state&quot;</span> <span class="ot">=</span> <span class="st">&quot;state&quot;</span>)</span>
+<span id="cb19-6"><a href="#cb19-6" tabindex="-1"></a>  )  </span></code></pre></div>
 <p>We check if they have all been related.</p>
-<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a>empty_county <span class="ot">&lt;-</span> gms <span class="sc">|&gt;</span></span>
-<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>  <span class="fu">get_empty_geoinstances</span>(<span class="at">attribute =</span> <span class="st">&quot;county&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" tabindex="-1"></a>empty_county <span class="ot">&lt;-</span> gms <span class="sc">|&gt;</span></span>
+<span id="cb20-2"><a href="#cb20-2" tabindex="-1"></a>  <span class="fu">get_empty_geoinstances</span>(<span class="at">attribute =</span> <span class="st">&quot;county&quot;</span>)</span></code></pre></div>
 <p>And the result obtained is shown below.</p>
 <table style="width:65%;">
 <colgroup>
@@ -589,243 +778,70 @@ the associated geometry is of a different type.</p>
 <p>In the case of <code>state</code> the definition is carried out by
 associating the code to the corresponding one in the layer
 (<code>usa_states</code>).</p>
-<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a>gms <span class="ot">&lt;-</span> gms <span class="sc">|&gt;</span></span>
-<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a>  <span class="fu">define_geoattribute</span>(</span>
-<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a>    <span class="at">attribute =</span> <span class="fu">c</span>(<span class="st">&quot;state&quot;</span>),</span>
-<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a>    <span class="at">from_layer =</span> usa_states,</span>
-<span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a>    <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;state&quot;</span> <span class="ot">=</span> <span class="st">&quot;state&quot;</span>)</span>
-<span id="cb11-6"><a href="#cb11-6" tabindex="-1"></a>  ) </span></code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" tabindex="-1"></a>gms <span class="ot">&lt;-</span> gms <span class="sc">|&gt;</span></span>
+<span id="cb21-2"><a href="#cb21-2" tabindex="-1"></a>  <span class="fu">define_geoattribute</span>(</span>
+<span id="cb21-3"><a href="#cb21-3" tabindex="-1"></a>    <span class="at">attribute =</span> <span class="fu">c</span>(<span class="st">&quot;state&quot;</span>),</span>
+<span id="cb21-4"><a href="#cb21-4" tabindex="-1"></a>    <span class="at">from_layer =</span> usa_states,</span>
+<span id="cb21-5"><a href="#cb21-5" tabindex="-1"></a>    <span class="at">by =</span> <span class="fu">c</span>(<span class="st">&quot;state&quot;</span> <span class="ot">=</span> <span class="st">&quot;state&quot;</span>)</span>
+<span id="cb21-6"><a href="#cb21-6" tabindex="-1"></a>  ) </span></code></pre></div>
 <p>Additionally, for an attribute we can generate its layer from the one
 associated with another related attribute of the dimension. This is what
 has been done below for <code>division</code>.</p>
-<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a>gms <span class="ot">&lt;-</span> gms <span class="sc">|&gt;</span></span>
-<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a>  <span class="fu">define_geoattribute</span>(</span>
-<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a>    <span class="at">attribute =</span> <span class="st">&quot;division&quot;</span>,</span>
-<span id="cb12-4"><a href="#cb12-4" tabindex="-1"></a>    <span class="at">from_attribute =</span> <span class="st">&quot;state&quot;</span></span>
-<span id="cb12-5"><a href="#cb12-5" tabindex="-1"></a>  ) </span></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" tabindex="-1"></a>gms <span class="ot">&lt;-</span> gms <span class="sc">|&gt;</span></span>
+<span id="cb22-2"><a href="#cb22-2" tabindex="-1"></a>  <span class="fu">define_geoattribute</span>(</span>
+<span id="cb22-3"><a href="#cb22-3" tabindex="-1"></a>    <span class="at">attribute =</span> <span class="st">&quot;division&quot;</span>,</span>
+<span id="cb22-4"><a href="#cb22-4" tabindex="-1"></a>    <span class="at">from_attribute =</span> <span class="st">&quot;state&quot;</span></span>
+<span id="cb22-5"><a href="#cb22-5" tabindex="-1"></a>  ) </span></code></pre></div>
 <p>In this case, the vector layer is generated from the data available
 in the layer under consideration. Sometimes this is precisely what is
 desired. If not, look for a vector layer at that level of detail.</p>
 <p>If no attribute name is indicated, this operation is applied to the
 rest of the attributes of the dimension that do not have an associated
 vector layer by any of the methods presented, as shown below.</p>
-<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" tabindex="-1"></a>gms <span class="ot">&lt;-</span> gms <span class="sc">|&gt;</span></span>
-<span id="cb13-2"><a href="#cb13-2" tabindex="-1"></a>  <span class="fu">define_geoattribute</span>(<span class="at">from_attribute =</span> <span class="st">&quot;state&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" tabindex="-1"></a>gms <span class="ot">&lt;-</span> gms <span class="sc">|&gt;</span></span>
+<span id="cb23-2"><a href="#cb23-2" tabindex="-1"></a>  <span class="fu">define_geoattribute</span>(<span class="at">from_attribute =</span> <span class="st">&quot;state&quot;</span>)</span></code></pre></div>
 <p>With this we have all the attributes of the dimension with an
 associated layer, defined at its level of granularity<a href="#fn3" class="footnote-ref" id="fnref3"><sup>3</sup></a>. On the other hand, we
 can change the layer of any attribute at any time, independently of the
 rest.</p>
 </div>
-<div id="define-multidimensional-queries" class="section level2">
-<h2>Define multidimensional queries</h2>
-<p>Multidimensional queries are defined from a <code>multistar</code>
-object. Since we are working with <code>geomultistar</code>, a
-specialization of <code>multistar</code>, we can use this object to
-define the query.</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a>gdqr <span class="ot">&lt;-</span> <span class="fu">dimensional_query</span>(gms) <span class="sc">|&gt;</span></span>
-<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a>  <span class="fu">select_dimension</span>(<span class="at">name =</span> <span class="st">&quot;where&quot;</span>,</span>
-<span id="cb14-3"><a href="#cb14-3" tabindex="-1"></a>                   <span class="at">attributes =</span> <span class="fu">c</span>(<span class="st">&quot;division_name&quot;</span>, <span class="st">&quot;region_name&quot;</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb14-4"><a href="#cb14-4" tabindex="-1"></a>  <span class="fu">select_dimension</span>(<span class="at">name =</span> <span class="st">&quot;when&quot;</span>,</span>
-<span id="cb14-5"><a href="#cb14-5" tabindex="-1"></a>                   <span class="at">attributes =</span> <span class="fu">c</span>(<span class="st">&quot;year&quot;</span>, <span class="st">&quot;week&quot;</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb14-6"><a href="#cb14-6" tabindex="-1"></a>  <span class="fu">select_fact</span>(<span class="at">name =</span> <span class="st">&quot;mrs_age&quot;</span>,</span>
-<span id="cb14-7"><a href="#cb14-7" tabindex="-1"></a>              <span class="at">measures =</span> <span class="fu">c</span>(<span class="st">&quot;n_deaths&quot;</span>)) <span class="sc">|&gt;</span></span>
-<span id="cb14-8"><a href="#cb14-8" tabindex="-1"></a>  <span class="fu">select_fact</span>(</span>
-<span id="cb14-9"><a href="#cb14-9" tabindex="-1"></a>    <span class="at">name =</span> <span class="st">&quot;mrs_cause&quot;</span>,</span>
-<span id="cb14-10"><a href="#cb14-10" tabindex="-1"></a>    <span class="at">measures =</span> <span class="fu">c</span>(<span class="st">&quot;pneumonia_and_influenza_deaths&quot;</span>, <span class="st">&quot;other_deaths&quot;</span>)</span>
-<span id="cb14-11"><a href="#cb14-11" tabindex="-1"></a>  ) <span class="sc">|&gt;</span></span>
-<span id="cb14-12"><a href="#cb14-12" tabindex="-1"></a>  <span class="fu">filter_dimension</span>(<span class="at">name =</span> <span class="st">&quot;when&quot;</span>, week <span class="sc">&lt;=</span> <span class="st">&quot;03&quot;</span>)</span></code></pre></div>
-<p>The definition functions of this type of queries is based on the
-selection of facts and dimensions, and the filter of dimensions.</p>
-<p>If we use the function <code>run_query()</code>, a multidimensional
-query is executed, as shown below.</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a>ft <span class="ot">&lt;-</span> gdqr <span class="sc">|&gt;</span></span>
-<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a>  <span class="fu">run_query</span>() <span class="sc">|&gt;</span></span>
-<span id="cb15-3"><a href="#cb15-3" tabindex="-1"></a>  <span class="fu">multistar_as_flat_table</span>()</span></code></pre></div>
-<p>The result of this type of query is a <code>multistar</code> object,
-which we can transform into a flat table to display it more easily, as
-we do below for the first rows.</p>
-<table style="width:100%;">
-<colgroup>
-<col width="4%" />
-<col width="4%" />
-<col width="13%" />
-<col width="8%" />
-<col width="7%" />
-<col width="5%" />
-<col width="27%" />
-<col width="15%" />
-<col width="13%" />
-</colgroup>
-<thead>
-<tr class="header">
-<th align="center">year</th>
-<th align="center">week</th>
-<th align="center">division_name</th>
-<th align="center">region_name</th>
-<th align="center">n_deaths</th>
-<th align="center">count</th>
-<th align="center">mrs_cause_pneumonia_and_influenza_deaths</th>
-<th align="center">mrs_cause_other_deaths</th>
-<th align="center">mrs_cause_nrow_agg</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td align="center">1962</td>
-<td align="center">01</td>
-<td align="center">East North Central</td>
-<td align="center">Midwest</td>
-<td align="center">2258</td>
-<td align="center">75</td>
-<td align="center">113</td>
-<td align="center">2145</td>
-<td align="center">16</td>
-</tr>
-<tr class="even">
-<td align="center">1962</td>
-<td align="center">01</td>
-<td align="center">East South Central</td>
-<td align="center">South</td>
-<td align="center">526</td>
-<td align="center">35</td>
-<td align="center">31</td>
-<td align="center">495</td>
-<td align="center">7</td>
-</tr>
-<tr class="odd">
-<td align="center">1962</td>
-<td align="center">01</td>
-<td align="center">Middle Atlantic</td>
-<td align="center">Northeast</td>
-<td align="center">3452</td>
-<td align="center">86</td>
-<td align="center">173</td>
-<td align="center">3279</td>
-<td align="center">20</td>
-</tr>
-<tr class="even">
-<td align="center">1962</td>
-<td align="center">01</td>
-<td align="center">Mountain</td>
-<td align="center">West</td>
-<td align="center">414</td>
-<td align="center">35</td>
-<td align="center">34</td>
-<td align="center">380</td>
-<td align="center">8</td>
-</tr>
-<tr class="odd">
-<td align="center">1962</td>
-<td align="center">01</td>
-<td align="center">New England</td>
-<td align="center">Northeast</td>
-<td align="center">785</td>
-<td align="center">57</td>
-<td align="center">56</td>
-<td align="center">729</td>
-<td align="center">14</td>
-</tr>
-<tr class="even">
-<td align="center">1962</td>
-<td align="center">01</td>
-<td align="center">Pacific</td>
-<td align="center">West</td>
-<td align="center">1567</td>
-<td align="center">67</td>
-<td align="center">56</td>
-<td align="center">1511</td>
-<td align="center">14</td>
-</tr>
-<tr class="odd">
-<td align="center">1962</td>
-<td align="center">01</td>
-<td align="center">South Atlantic</td>
-<td align="center">South</td>
-<td align="center">1271</td>
-<td align="center">59</td>
-<td align="center">58</td>
-<td align="center">1213</td>
-<td align="center">12</td>
-</tr>
-<tr class="even">
-<td align="center">1962</td>
-<td align="center">01</td>
-<td align="center">West North Central</td>
-<td align="center">Midwest</td>
-<td align="center">936</td>
-<td align="center">46</td>
-<td align="center">47</td>
-<td align="center">889</td>
-<td align="center">10</td>
-</tr>
-<tr class="odd">
-<td align="center">1962</td>
-<td align="center">01</td>
-<td align="center">West South Central</td>
-<td align="center">South</td>
-<td align="center">1243</td>
-<td align="center">65</td>
-<td align="center">66</td>
-<td align="center">1177</td>
-<td align="center">13</td>
-</tr>
-<tr class="even">
-<td align="center">1962</td>
-<td align="center">02</td>
-<td align="center">East North Central</td>
-<td align="center">Midwest</td>
-<td align="center">2289</td>
-<td align="center">76</td>
-<td align="center">115</td>
-<td align="center">2174</td>
-<td align="center">16</td>
-</tr>
-<tr class="odd">
-<td align="center">1962</td>
-<td align="center">02</td>
-<td align="center">East South Central</td>
-<td align="center">South</td>
-<td align="center">575</td>
-<td align="center">33</td>
-<td align="center">36</td>
-<td align="center">539</td>
-<td align="center">7</td>
-</tr>
-<tr class="even">
-<td align="center">1962</td>
-<td align="center">02</td>
-<td align="center">Middle Atlantic</td>
-<td align="center">Northeast</td>
-<td align="center">3426</td>
-<td align="center">90</td>
-<td align="center">157</td>
-<td align="center">3269</td>
-<td align="center">20</td>
-</tr>
-</tbody>
-</table>
-</div>
 <div id="run-queries-adding-geographic-information" class="section level2">
 <h2>Run queries adding geographic information</h2>
+<p>Next we define the same query as before but on the data model
+enriched with geographic information.</p>
+<div class="sourceCode" id="cb24"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" tabindex="-1"></a>gdq <span class="ot">&lt;-</span> <span class="fu">dimensional_query</span>(gms) <span class="sc">|&gt;</span></span>
+<span id="cb24-2"><a href="#cb24-2" tabindex="-1"></a>  <span class="fu">select_dimension</span>(<span class="at">name =</span> <span class="st">&quot;where&quot;</span>,</span>
+<span id="cb24-3"><a href="#cb24-3" tabindex="-1"></a>                   <span class="at">attributes =</span> <span class="fu">c</span>(<span class="st">&quot;division_name&quot;</span>, <span class="st">&quot;region_name&quot;</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb24-4"><a href="#cb24-4" tabindex="-1"></a>  <span class="fu">select_dimension</span>(<span class="at">name =</span> <span class="st">&quot;when&quot;</span>,</span>
+<span id="cb24-5"><a href="#cb24-5" tabindex="-1"></a>                   <span class="at">attributes =</span> <span class="fu">c</span>(<span class="st">&quot;year&quot;</span>, <span class="st">&quot;week&quot;</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb24-6"><a href="#cb24-6" tabindex="-1"></a>  <span class="fu">select_fact</span>(<span class="at">name =</span> <span class="st">&quot;mrs_age&quot;</span>,</span>
+<span id="cb24-7"><a href="#cb24-7" tabindex="-1"></a>              <span class="at">measures =</span> <span class="st">&quot;n_deaths&quot;</span>) <span class="sc">|&gt;</span></span>
+<span id="cb24-8"><a href="#cb24-8" tabindex="-1"></a>  <span class="fu">filter_dimension</span>(<span class="at">name =</span> <span class="st">&quot;when&quot;</span>, week <span class="sc">&lt;=</span> <span class="st">&quot;03&quot;</span>)</span>
+<span id="cb24-9"><a href="#cb24-9" tabindex="-1"></a></span>
+<span id="cb24-10"><a href="#cb24-10" tabindex="-1"></a>gms_2 <span class="ot">&lt;-</span> gdq <span class="sc">|&gt;</span></span>
+<span id="cb24-11"><a href="#cb24-11" tabindex="-1"></a>  <span class="fu">run_query</span>()</span>
+<span id="cb24-12"><a href="#cb24-12" tabindex="-1"></a></span>
+<span id="cb24-13"><a href="#cb24-13" tabindex="-1"></a><span class="fu">class</span>(gms_2)</span>
+<span id="cb24-14"><a href="#cb24-14" tabindex="-1"></a><span class="co">#&gt; [1] &quot;multistar&quot;</span></span></code></pre></div>
 <p>If instead of executing the standard query, we execute
 <code>run_geoquery()</code> function, we automatically obtain a vector
 geographic data layer at the finest possible level of detail, depending
 on the definition of the query.</p>
-<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" tabindex="-1"></a>vl_sf <span class="ot">&lt;-</span> gdqr <span class="sc">|&gt;</span></span>
-<span id="cb16-2"><a href="#cb16-2" tabindex="-1"></a>  <span class="fu">run_geoquery</span>()</span></code></pre></div>
+<div class="sourceCode" id="cb25"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" tabindex="-1"></a>vl_sf <span class="ot">&lt;-</span> gdq <span class="sc">|&gt;</span></span>
+<span id="cb25-2"><a href="#cb25-2" tabindex="-1"></a>  <span class="fu">run_geoquery</span>()</span>
+<span id="cb25-3"><a href="#cb25-3" tabindex="-1"></a></span>
+<span id="cb25-4"><a href="#cb25-4" tabindex="-1"></a><span class="fu">class</span>(vl_sf)</span>
+<span id="cb25-5"><a href="#cb25-5" tabindex="-1"></a><span class="co">#&gt; [1] &quot;sf&quot;         &quot;tbl_df&quot;     &quot;tbl&quot;        &quot;data.frame&quot;</span></span></code></pre></div>
 <p>The first rows of the result can be seen below in table form.</p>
 <table>
 <colgroup>
-<col width="3%" />
-<col width="3%" />
-<col width="11%" />
-<col width="7%" />
-<col width="5%" />
-<col width="4%" />
-<col width="22%" />
+<col width="6%" />
+<col width="6%" />
+<col width="20%" />
 <col width="13%" />
-<col width="11%" />
-<col width="17%" />
+<col width="10%" />
+<col width="7%" />
+<col width="32%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -835,9 +851,6 @@ on the definition of the query.</p>
 <th align="center">region_name</th>
 <th align="center">n_deaths</th>
 <th align="center">count</th>
-<th align="center">mrs_cause_pneumonia_and_influenza_deaths</th>
-<th align="center">mrs_cause_other_deaths</th>
-<th align="center">mrs_cause_nrow_agg</th>
 <th align="center">geometry</th>
 </tr>
 </thead>
@@ -849,9 +862,6 @@ on the definition of the query.</p>
 <td align="center">Midwest</td>
 <td align="center">2258</td>
 <td align="center">75</td>
-<td align="center">113</td>
-<td align="center">2145</td>
-<td align="center">16</td>
 <td align="center">MULTIPOLYGON (((-84.65 45.8…</td>
 </tr>
 <tr class="even">
@@ -861,9 +871,6 @@ on the definition of the query.</p>
 <td align="center">South</td>
 <td align="center">526</td>
 <td align="center">35</td>
-<td align="center">31</td>
-<td align="center">495</td>
-<td align="center">7</td>
 <td align="center">MULTIPOLYGON (((-88.4 30.37…</td>
 </tr>
 <tr class="odd">
@@ -873,9 +880,6 @@ on the definition of the query.</p>
 <td align="center">Northeast</td>
 <td align="center">3452</td>
 <td align="center">86</td>
-<td align="center">173</td>
-<td align="center">3279</td>
-<td align="center">20</td>
 <td align="center">MULTIPOLYGON (((-72.03 41.2…</td>
 </tr>
 <tr class="even">
@@ -885,9 +889,6 @@ on the definition of the query.</p>
 <td align="center">West</td>
 <td align="center">414</td>
 <td align="center">35</td>
-<td align="center">34</td>
-<td align="center">380</td>
-<td align="center">8</td>
 <td align="center">MULTIPOLYGON (((-109.1 41, …</td>
 </tr>
 <tr class="odd">
@@ -897,9 +898,6 @@ on the definition of the query.</p>
 <td align="center">Northeast</td>
 <td align="center">785</td>
 <td align="center">57</td>
-<td align="center">56</td>
-<td align="center">729</td>
-<td align="center">14</td>
 <td align="center">MULTIPOLYGON (((-71.59 41.1…</td>
 </tr>
 <tr class="even">
@@ -909,92 +907,14 @@ on the definition of the query.</p>
 <td align="center">West</td>
 <td align="center">1567</td>
 <td align="center">67</td>
-<td align="center">56</td>
-<td align="center">1511</td>
-<td align="center">14</td>
 <td align="center">MULTIPOLYGON (((-156.1 19.7…</td>
-</tr>
-<tr class="odd">
-<td align="center">1962</td>
-<td align="center">01</td>
-<td align="center">South Atlantic</td>
-<td align="center">South</td>
-<td align="center">1271</td>
-<td align="center">59</td>
-<td align="center">58</td>
-<td align="center">1213</td>
-<td align="center">12</td>
-<td align="center">MULTIPOLYGON (((-81.81 24.5…</td>
-</tr>
-<tr class="even">
-<td align="center">1962</td>
-<td align="center">01</td>
-<td align="center">West North Central</td>
-<td align="center">Midwest</td>
-<td align="center">936</td>
-<td align="center">46</td>
-<td align="center">47</td>
-<td align="center">889</td>
-<td align="center">10</td>
-<td align="center">POLYGON ((-102 36.99, -94.6…</td>
-</tr>
-<tr class="odd">
-<td align="center">1962</td>
-<td align="center">01</td>
-<td align="center">West South Central</td>
-<td align="center">South</td>
-<td align="center">1243</td>
-<td align="center">65</td>
-<td align="center">66</td>
-<td align="center">1177</td>
-<td align="center">13</td>
-<td align="center">POLYGON ((-106.6 31.87, -10…</td>
-</tr>
-<tr class="even">
-<td align="center">1962</td>
-<td align="center">02</td>
-<td align="center">East North Central</td>
-<td align="center">Midwest</td>
-<td align="center">2289</td>
-<td align="center">76</td>
-<td align="center">115</td>
-<td align="center">2174</td>
-<td align="center">16</td>
-<td align="center">MULTIPOLYGON (((-84.65 45.8…</td>
-</tr>
-<tr class="odd">
-<td align="center">1962</td>
-<td align="center">02</td>
-<td align="center">East South Central</td>
-<td align="center">South</td>
-<td align="center">575</td>
-<td align="center">33</td>
-<td align="center">36</td>
-<td align="center">539</td>
-<td align="center">7</td>
-<td align="center">MULTIPOLYGON (((-88.4 30.37…</td>
-</tr>
-<tr class="even">
-<td align="center">1962</td>
-<td align="center">02</td>
-<td align="center">Middle Atlantic</td>
-<td align="center">Northeast</td>
-<td align="center">3426</td>
-<td align="center">90</td>
-<td align="center">157</td>
-<td align="center">3269</td>
-<td align="center">20</td>
-<td align="center">MULTIPOLYGON (((-72.03 41.2…</td>
 </tr>
 </tbody>
 </table>
 <p>The result is a vector geographic data layer that we can save,
 perform spatial analysis or queries on it, or we can see it as a map,
 using the functions associated with the <code>sf</code> class.</p>
-<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" tabindex="-1"></a><span class="fu">class</span>(vl_sf)</span>
-<span id="cb17-2"><a href="#cb17-2" tabindex="-1"></a><span class="co">#&gt; [1] &quot;sf&quot;         &quot;tbl_df&quot;     &quot;tbl&quot;        &quot;data.frame&quot;</span></span>
-<span id="cb17-3"><a href="#cb17-3" tabindex="-1"></a></span>
-<span id="cb17-4"><a href="#cb17-4" tabindex="-1"></a><span class="fu">plot</span>(vl_sf[,<span class="st">&quot;n_deaths&quot;</span>])</span></code></pre></div>
+<div class="sourceCode" id="cb26"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" tabindex="-1"></a><span class="fu">plot</span>(vl_sf[,<span class="st">&quot;n_deaths&quot;</span>])</span></code></pre></div>
 <p><img src="data:image/png;base64,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" /><!-- --></p>
 <p>Although we have indicated in the query the attributes
 <code>division_name</code> and <code>region_name</code>, as can be seen
@@ -1011,31 +931,22 @@ level.</p>
 The tables are wide: for each object the rest of the attributes are
 defined as columns. By means of the parameter <code>wider</code> we can
 indicate that we want a result of this type.</p>
-<div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" tabindex="-1"></a>vl_sf_w <span class="ot">&lt;-</span> gdqr <span class="sc">|&gt;</span></span>
-<span id="cb18-2"><a href="#cb18-2" tabindex="-1"></a>  <span class="fu">run_geoquery</span>(<span class="at">wider =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" tabindex="-1"></a>vl_sf_w <span class="ot">&lt;-</span> gdq <span class="sc">|&gt;</span></span>
+<span id="cb27-2"><a href="#cb27-2" tabindex="-1"></a>  <span class="fu">run_geoquery</span>(<span class="at">wider =</span> <span class="cn">TRUE</span>)</span></code></pre></div>
 <p>The first rows of the result can be seen below in table form.</p>
-<table style="width:100%;">
+<table>
 <colgroup>
-<col width="1%" />
-<col width="1%" />
+<col width="3%" />
 <col width="4%" />
-<col width="3%" />
-<col width="3%" />
-<col width="3%" />
-<col width="3%" />
-<col width="2%" />
-<col width="2%" />
-<col width="2%" />
-<col width="10%" />
-<col width="10%" />
-<col width="10%" />
-<col width="6%" />
-<col width="6%" />
-<col width="6%" />
-<col width="5%" />
-<col width="5%" />
-<col width="5%" />
+<col width="13%" />
+<col width="8%" />
+<col width="8%" />
+<col width="8%" />
+<col width="8%" />
 <col width="7%" />
+<col width="7%" />
+<col width="7%" />
+<col width="21%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -1049,15 +960,6 @@ indicate that we want a result of this type.</p>
 <th align="center">count_01</th>
 <th align="center">count_02</th>
 <th align="center">count_03</th>
-<th align="center">mrs_cause_pneumonia_and_influenza_deaths_01</th>
-<th align="center">mrs_cause_pneumonia_and_influenza_deaths_02</th>
-<th align="center">mrs_cause_pneumonia_and_influenza_deaths_03</th>
-<th align="center">mrs_cause_other_deaths_01</th>
-<th align="center">mrs_cause_other_deaths_02</th>
-<th align="center">mrs_cause_other_deaths_03</th>
-<th align="center">mrs_cause_nrow_agg_01</th>
-<th align="center">mrs_cause_nrow_agg_02</th>
-<th align="center">mrs_cause_nrow_agg_03</th>
 <th align="center">geometry</th>
 </tr>
 </thead>
@@ -1073,15 +975,6 @@ indicate that we want a result of this type.</p>
 <td align="center">75</td>
 <td align="center">76</td>
 <td align="center">75</td>
-<td align="center">113</td>
-<td align="center">115</td>
-<td align="center">125</td>
-<td align="center">2145</td>
-<td align="center">2174</td>
-<td align="center">2189</td>
-<td align="center">16</td>
-<td align="center">16</td>
-<td align="center">16</td>
 <td align="center">MULTIPOLYGON (((-84.65 45.8…</td>
 </tr>
 <tr class="even">
@@ -1095,15 +988,6 @@ indicate that we want a result of this type.</p>
 <td align="center">35</td>
 <td align="center">33</td>
 <td align="center">32</td>
-<td align="center">31</td>
-<td align="center">36</td>
-<td align="center">44</td>
-<td align="center">495</td>
-<td align="center">539</td>
-<td align="center">606</td>
-<td align="center">7</td>
-<td align="center">7</td>
-<td align="center">7</td>
 <td align="center">MULTIPOLYGON (((-88.4 30.37…</td>
 </tr>
 <tr class="odd">
@@ -1117,15 +1001,6 @@ indicate that we want a result of this type.</p>
 <td align="center">86</td>
 <td align="center">90</td>
 <td align="center">91</td>
-<td align="center">173</td>
-<td align="center">157</td>
-<td align="center">160</td>
-<td align="center">3279</td>
-<td align="center">3269</td>
-<td align="center">3253</td>
-<td align="center">20</td>
-<td align="center">20</td>
-<td align="center">20</td>
 <td align="center">MULTIPOLYGON (((-72.03 41.2…</td>
 </tr>
 <tr class="even">
@@ -1139,15 +1014,6 @@ indicate that we want a result of this type.</p>
 <td align="center">35</td>
 <td align="center">34</td>
 <td align="center">35</td>
-<td align="center">34</td>
-<td align="center">21</td>
-<td align="center">29</td>
-<td align="center">380</td>
-<td align="center">390</td>
-<td align="center">443</td>
-<td align="center">8</td>
-<td align="center">8</td>
-<td align="center">8</td>
 <td align="center">MULTIPOLYGON (((-109.1 41, …</td>
 </tr>
 <tr class="odd">
@@ -1161,15 +1027,6 @@ indicate that we want a result of this type.</p>
 <td align="center">57</td>
 <td align="center">61</td>
 <td align="center">57</td>
-<td align="center">56</td>
-<td align="center">52</td>
-<td align="center">48</td>
-<td align="center">729</td>
-<td align="center">733</td>
-<td align="center">678</td>
-<td align="center">14</td>
-<td align="center">14</td>
-<td align="center">14</td>
 <td align="center">MULTIPOLYGON (((-71.59 41.1…</td>
 </tr>
 <tr class="even">
@@ -1183,82 +1040,7 @@ indicate that we want a result of this type.</p>
 <td align="center">67</td>
 <td align="center">67</td>
 <td align="center">66</td>
-<td align="center">56</td>
-<td align="center">70</td>
-<td align="center">76</td>
-<td align="center">1511</td>
-<td align="center">1753</td>
-<td align="center">1561</td>
-<td align="center">14</td>
-<td align="center">14</td>
-<td align="center">14</td>
 <td align="center">MULTIPOLYGON (((-156.1 19.7…</td>
-</tr>
-<tr class="odd">
-<td align="center">7</td>
-<td align="center">1962</td>
-<td align="center">South Atlantic</td>
-<td align="center">South</td>
-<td align="center">1271</td>
-<td align="center">1179</td>
-<td align="center">1319</td>
-<td align="center">59</td>
-<td align="center">58</td>
-<td align="center">57</td>
-<td align="center">58</td>
-<td align="center">54</td>
-<td align="center">62</td>
-<td align="center">1213</td>
-<td align="center">1125</td>
-<td align="center">1257</td>
-<td align="center">12</td>
-<td align="center">12</td>
-<td align="center">12</td>
-<td align="center">MULTIPOLYGON (((-81.81 24.5…</td>
-</tr>
-<tr class="even">
-<td align="center">8</td>
-<td align="center">1962</td>
-<td align="center">West North Central</td>
-<td align="center">Midwest</td>
-<td align="center">936</td>
-<td align="center">1040</td>
-<td align="center">936</td>
-<td align="center">46</td>
-<td align="center">47</td>
-<td align="center">47</td>
-<td align="center">47</td>
-<td align="center">74</td>
-<td align="center">55</td>
-<td align="center">889</td>
-<td align="center">966</td>
-<td align="center">881</td>
-<td align="center">10</td>
-<td align="center">10</td>
-<td align="center">10</td>
-<td align="center">POLYGON ((-102 36.99, -94.6…</td>
-</tr>
-<tr class="odd">
-<td align="center">9</td>
-<td align="center">1962</td>
-<td align="center">West South Central</td>
-<td align="center">South</td>
-<td align="center">1243</td>
-<td align="center">1096</td>
-<td align="center">1297</td>
-<td align="center">65</td>
-<td align="center">63</td>
-<td align="center">59</td>
-<td align="center">66</td>
-<td align="center">67</td>
-<td align="center">85</td>
-<td align="center">1177</td>
-<td align="center">1029</td>
-<td align="center">1212</td>
-<td align="center">13</td>
-<td align="center">13</td>
-<td align="center">13</td>
-<td align="center">POLYGON ((-106.6 31.87, -10…</td>
 </tr>
 </tbody>
 </table>
@@ -1268,11 +1050,11 @@ measurement columns have been generated: one for each combination of
 values of these attributes with the original measurements.</p>
 <p>The meaning of the name of the columns of the measurements is part of
 the result obtained, also in table format, as can be seen below.</p>
-<table>
+<table style="width:44%;">
 <colgroup>
-<col width="47%" />
-<col width="44%" />
-<col width="7%" />
+<col width="19%" />
+<col width="15%" />
+<col width="9%" />
 </colgroup>
 <thead>
 <tr class="header">
@@ -1312,36 +1094,6 @@ the result obtained, also in table format, as can be seen below.</p>
 <td align="center">count</td>
 <td align="center">03</td>
 </tr>
-<tr class="odd">
-<td align="center">mrs_cause_pneumonia_and_influenza_deaths_01</td>
-<td align="center">mrs_cause_pneumonia_and_influenza_deaths</td>
-<td align="center">01</td>
-</tr>
-<tr class="even">
-<td align="center">mrs_cause_pneumonia_and_influenza_deaths_02</td>
-<td align="center">mrs_cause_pneumonia_and_influenza_deaths</td>
-<td align="center">02</td>
-</tr>
-<tr class="odd">
-<td align="center">mrs_cause_pneumonia_and_influenza_deaths_03</td>
-<td align="center">mrs_cause_pneumonia_and_influenza_deaths</td>
-<td align="center">03</td>
-</tr>
-<tr class="even">
-<td align="center">mrs_cause_other_deaths_01</td>
-<td align="center">mrs_cause_other_deaths</td>
-<td align="center">01</td>
-</tr>
-<tr class="odd">
-<td align="center">mrs_cause_other_deaths_02</td>
-<td align="center">mrs_cause_other_deaths</td>
-<td align="center">02</td>
-</tr>
-<tr class="even">
-<td align="center">mrs_cause_other_deaths_03</td>
-<td align="center">mrs_cause_other_deaths</td>
-<td align="center">03</td>
-</tr>
 </tbody>
 </table>
 <p>In this case there was only one variable with a multiplicity greater
@@ -1350,7 +1102,20 @@ added to this table in the same way.</p>
 <p>This data dictionary table and layer structure can be saved in
 <em>GeoPackage</em> format using the <code>save_as_geopackage()</code>
 function.</p>
-<div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" tabindex="-1"></a><span class="fu">save_as_geopackage</span>(vl_sf_w, <span class="st">&quot;division&quot;</span>)</span></code></pre></div>
+<div class="sourceCode" id="cb28"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" tabindex="-1"></a>filepath <span class="ot">&lt;-</span> <span class="fu">tempdir</span>()</span>
+<span id="cb28-2"><a href="#cb28-2" tabindex="-1"></a>l <span class="ot">&lt;-</span> <span class="fu">save_as_geopackage</span>(vl_sf_w, <span class="st">&quot;division&quot;</span>, <span class="at">filepath =</span> filepath)</span>
+<span id="cb28-3"><a href="#cb28-3" tabindex="-1"></a><span class="co">#&gt; Deleting source `C:\Users\joses\AppData\Local\Temp\RtmpQJAPf5/division.gpkg&#39; failed</span></span>
+<span id="cb28-4"><a href="#cb28-4" tabindex="-1"></a><span class="co">#&gt; Writing layer `division&#39; to data source </span></span>
+<span id="cb28-5"><a href="#cb28-5" tabindex="-1"></a><span class="co">#&gt;   `C:\Users\joses\AppData\Local\Temp\RtmpQJAPf5/division.gpkg&#39; using driver `GPKG&#39;</span></span>
+<span id="cb28-6"><a href="#cb28-6" tabindex="-1"></a><span class="co">#&gt; Writing 9 features with 10 fields and geometry type Unknown (any).</span></span>
+<span id="cb28-7"><a href="#cb28-7" tabindex="-1"></a></span>
+<span id="cb28-8"><a href="#cb28-8" tabindex="-1"></a>file <span class="ot">&lt;-</span> <span class="fu">paste0</span>(filepath, <span class="st">&quot;/division.gpkg&quot;</span>)</span>
+<span id="cb28-9"><a href="#cb28-9" tabindex="-1"></a>sf<span class="sc">::</span><span class="fu">st_layers</span>(file)</span>
+<span id="cb28-10"><a href="#cb28-10" tabindex="-1"></a><span class="co">#&gt; Driver: GPKG </span></span>
+<span id="cb28-11"><a href="#cb28-11" tabindex="-1"></a><span class="co">#&gt; Available layers:</span></span>
+<span id="cb28-12"><a href="#cb28-12" tabindex="-1"></a><span class="co">#&gt;           layer_name geometry_type features fields crs_name</span></span>
+<span id="cb28-13"><a href="#cb28-13" tabindex="-1"></a><span class="co">#&gt; 1           division                      9      9    NAD83</span></span>
+<span id="cb28-14"><a href="#cb28-14" tabindex="-1"></a><span class="co">#&gt; 2 division_variables            NA        6      3     &lt;NA&gt;</span></span></code></pre></div>
 <p>The <em>GeoPackages</em> thus obtained can be used directly, for
 example in <em>QGIS</em>.</p>
 </div>

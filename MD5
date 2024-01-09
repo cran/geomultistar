@@ -1,7 +1,7 @@
-fc79fa209612ec774e621c9bb19aaf97 *DESCRIPTION
+983e835948b194423a8eb85c8db2544a *DESCRIPTION
 c6538de4f31a53b09524440934429059 *LICENSE
 3b87c0ffa0f1b659a7c681022bd93216 *NAMESPACE
-77b3b74c265f24fcffa3a537437add17 *NEWS.md
+a8b5aa44a5f714b9520b0f970284ce7d *NEWS.md
 31f09a4cce25426ae3cde9c9f5ec0e46 *R/common.R
 19cfe7b8c19dccde5e759bca373e6e5b *R/data.R
 d38321e208967e45d9bb927ece93bffe *R/dimensional_query.R
@@ -10,7 +10,7 @@ d38321e208967e45d9bb927ece93bffe *R/dimensional_query.R
 596f0f111b70d7123e67de1e36f7b895 *R/dimensional_query_run_query.R
 eb258c52fcc580d19c84043e0899c3ee *R/dimensional_query_save.R
 0b20dd6344a0d6af80c3740ea5bf18ad *R/dimensional_query_select_dimension.R
-f3de4e77d1d015b1585c064a66b9ad21 *R/dimensional_query_select_fact.R
+2007cd225123f2cf555d1acebd3f0fb5 *R/dimensional_query_select_fact.R
 315677d1c7515766ceb43dbc8c3f4d47 *R/geomultistar.R
 c304988328e1e123ab40e5562b908151 *R/geomultistar_define_geoattribute.R
 883ac554796d79aee5365682142fd95c *R/geomultistar_get_empty_geoinstances.R
@@ -18,8 +18,8 @@ c304988328e1e123ab40e5562b908151 *R/geomultistar_define_geoattribute.R
 04185c91adcf2f7ed4c4dc6b9fd17e96 *R/multistar_add_dimension.R
 4fde7293535641077bc46e47f25142b3 *R/multistar_add_facts.R
 ffb8292d88b9e56776679c182d31b01d *R/multistar_relate_dimension.R
-16855b7a7e68920a7b7bf713693e3eb1 *README.md
-a058d1d0771574ccc1055e61adfcdd8c *build/vignette.rds
+f250a7dcfa260463ae5e1b69c3ccea6f *README.md
+012f9794ffb5e31bb67bbce8af60c904 *build/vignette.rds
 33a36623b40a77e0539eda3be94e1ffe *data/mrs_age_test.rda
 515aff4dc202652205bea35ff18edef8 *data/mrs_fact_age.rda
 b1795f7108aa510a19208efba1a801ed *data/mrs_fact_cause.rda
@@ -36,10 +36,10 @@ c36e42000970f75e2d0abba76976a575 *data/st_mrs_age_test.rda
 6830a54398059dc34b9d98564cb7918f *data/usa_nation.rda
 8f70c4c6a235a567781bbe166846b7b5 *data/usa_regions.rda
 3c6f551066bff44dbef584fdad977cb0 *data/usa_states.rda
-2c8984710515f4908daf53f18fd81de1 *inst/doc/geomultistar.R
-24a7d9ceb6f0b8f04a51083688ead1e5 *inst/doc/geomultistar.Rmd
-17e1e270c1433028c75a3fbc94f074ba *inst/doc/geomultistar.html
-459dc7afda10aecae5a065553d6b65d8 *inst/figures/geomultistar.png
+e86ff4afa518c42cc781e4e2ff1572fd *inst/doc/geomultistar.R
+7e20bbe4626a4bf84dde64a991394a13 *inst/doc/geomultistar.Rmd
+c10558d93d6b98fb71d810d86a52449a *inst/doc/geomultistar.html
+c8aa61978215a0cd0ceb2eaea4c62f2c *inst/figures/geomultistar.png
 c246249b5d420941f4293dec1d093418 *man/add_dimension.Rd
 69ac97f0f034477ea4bab54bf7d5eda8 *man/add_facts.Rd
 9b98475c7baecd9cbeb0f4c86861b772 *man/add_geodimension_additional_attributes.Rd
@@ -53,7 +53,7 @@ cfeb5ac246bc379fdef0d6c5cd923817 *man/define_selected_dimensions.Rd
 74579b27926100a7d3f6c5dd77a8a1a8 *man/dereference_dimension.Rd
 eb07cd6ced12c9e56457755839982f54 *man/dimensional_query.Rd
 a0aeff973e0302c0df86dd0c5de22c13 *man/figures/README-example4-1.png
-cf9889499b284da27677ca24c2abe4fd *man/figures/logo.png
+39eba92ca504b4814afa39bb089a3398 *man/figures/logo.png
 74992dd1a053b246d7c489d381162940 *man/filter_dimension.Rd
 75e8d1b93c8c974703b7dd320e7a824f *man/filter_selected_instances.Rd
 146d2e12ebb95456dd6d8df423f85535 *man/geomultistar.Rd
@@ -118,4 +118,4 @@ ade1ecfe106fad52920018adcd05d7ff *tests/testthat/test-st-prepare_join.R
 29d3acff521d1e5e5869325570405025 *tests/testthat/test-st-run_query.R
 cba76b81f075bd663ae051e4161a9624 *tests/testthat/test-st-select_dimension.R
 4d07bedb64de4f3b5c7a54619485dae3 *tests/testthat/test-st-select_fact.R
-24a7d9ceb6f0b8f04a51083688ead1e5 *vignettes/geomultistar.Rmd
+7e20bbe4626a4bf84dde64a991394a13 *vignettes/geomultistar.Rmd

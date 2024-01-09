@@ -63,6 +63,68 @@ ms <- ms |>
                    fact_key = "when_fk")
 
 ## -----------------------------------------------------------------------------
+dq <- dimensional_query(ms)
+
+## -----------------------------------------------------------------------------
+dq_1 <- dq |>
+  select_fact(
+    name = "mrs_age",
+    measures = "n_deaths",
+    agg_functions = "MAX"
+  )
+
+## -----------------------------------------------------------------------------
+dq_2 <- dq |>
+  select_fact(name = "mrs_age",
+              measures = "n_deaths")
+
+## -----------------------------------------------------------------------------
+dq_3 <- dq |>
+  select_fact(name = "mrs_age")
+
+## -----------------------------------------------------------------------------
+dq_4 <- dq |>
+  select_fact(name = "mrs_age",
+              measures = "n_deaths") |>
+  select_fact(name = "mrs_cause")
+
+## -----------------------------------------------------------------------------
+dq_1 <- dq |>
+  select_dimension(name = "where",
+                   attributes = c("city", "state"))
+
+## -----------------------------------------------------------------------------
+dq_2 <- dq |>
+  select_dimension(name = "where")
+
+## -----------------------------------------------------------------------------
+dq <- dq |>
+  filter_dimension(name = "when", week <= "03") |>
+  filter_dimension(name = "where", city == "Bridgeport")
+
+## -----------------------------------------------------------------------------
+dq <- dimensional_query(ms) |>
+  select_dimension(name = "where",
+                   attributes = c("division_name", "region_name")) |>
+  select_dimension(name = "when",
+                   attributes = c("year", "week")) |>
+  select_fact(name = "mrs_age",
+              measures = "n_deaths") |>
+  filter_dimension(name = "when", week <= "03")
+
+ms_2 <- dq |>
+  run_query()
+
+class(ms_2)
+
+## -----------------------------------------------------------------------------
+ft <- ms_2 |>
+  multistar_as_flat_table()
+
+## ----results = "asis", echo = FALSE-------------------------------------------
+pander::pandoc.table(head(ft), split.table = Inf)
+
+## -----------------------------------------------------------------------------
 gms <-
   geomultistar(ms, geodimension = "where")
 
@@ -116,49 +178,46 @@ gms <- gms |>
   define_geoattribute(from_attribute = "state")
 
 ## -----------------------------------------------------------------------------
-gdqr <- dimensional_query(gms) |>
+gdq <- dimensional_query(gms) |>
   select_dimension(name = "where",
                    attributes = c("division_name", "region_name")) |>
   select_dimension(name = "when",
                    attributes = c("year", "week")) |>
   select_fact(name = "mrs_age",
-              measures = c("n_deaths")) |>
-  select_fact(
-    name = "mrs_cause",
-    measures = c("pneumonia_and_influenza_deaths", "other_deaths")
-  ) |>
+              measures = "n_deaths") |>
   filter_dimension(name = "when", week <= "03")
 
-## -----------------------------------------------------------------------------
-ft <- gdqr |>
-  run_query() |>
-  multistar_as_flat_table()
+gms_2 <- gdq |>
+  run_query()
 
-## ----results = "asis", echo = FALSE-------------------------------------------
-pander::pandoc.table(head(ft, 12), split.table = Inf)
+class(gms_2)
 
 ## -----------------------------------------------------------------------------
-vl_sf <- gdqr |>
+vl_sf <- gdq |>
   run_geoquery()
 
-## ----results = "asis", echo = FALSE-------------------------------------------
-pander::pandoc.table(head(vl_sf, 12), split.table = Inf)
-
-## -----------------------------------------------------------------------------
 class(vl_sf)
 
+## ----results = "asis", echo = FALSE-------------------------------------------
+pander::pandoc.table(head(vl_sf), split.table = Inf)
+
+## -----------------------------------------------------------------------------
 plot(vl_sf[,"n_deaths"])
 
 ## -----------------------------------------------------------------------------
-vl_sf_w <- gdqr |>
+vl_sf_w <- gdq |>
   run_geoquery(wider = TRUE)
 
 ## ----results = "asis", echo = FALSE-------------------------------------------
-pander::pandoc.table(head(vl_sf_w$sf, 12), split.table = Inf)
+pander::pandoc.table(head(vl_sf_w$sf), split.table = Inf)
 
 ## ----results = "asis", echo = FALSE-------------------------------------------
-pander::pandoc.table(head(vl_sf_w$variables, 12), split.table = Inf)
+pander::pandoc.table(head(vl_sf_w$variables), split.table = Inf)
 
-## ----eval = FALSE-------------------------------------------------------------
-#  save_as_geopackage(vl_sf_w, "division")
+## -----------------------------------------------------------------------------
+filepath <- tempdir()
+l <- save_as_geopackage(vl_sf_w, "division", filepath = filepath)
+
+file <- paste0(filepath, "/division.gpkg")
+sf::st_layers(file)
 
