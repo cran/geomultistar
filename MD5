@@ -1,7 +1,7 @@
-983e835948b194423a8eb85c8db2544a *DESCRIPTION
+c55e863a4e6d7e78604a3ca0f8c9f087 *DESCRIPTION
 c6538de4f31a53b09524440934429059 *LICENSE
 3b87c0ffa0f1b659a7c681022bd93216 *NAMESPACE
-a8b5aa44a5f714b9520b0f970284ce7d *NEWS.md
+01d817675de2dacfac5d7f15dae3bd01 *NEWS.md
 31f09a4cce25426ae3cde9c9f5ec0e46 *R/common.R
 19cfe7b8c19dccde5e759bca373e6e5b *R/data.R
 d38321e208967e45d9bb927ece93bffe *R/dimensional_query.R
@@ -38,7 +38,7 @@ c36e42000970f75e2d0abba76976a575 *data/st_mrs_age_test.rda
 3c6f551066bff44dbef584fdad977cb0 *data/usa_states.rda
 e86ff4afa518c42cc781e4e2ff1572fd *inst/doc/geomultistar.R
 7e20bbe4626a4bf84dde64a991394a13 *inst/doc/geomultistar.Rmd
-c10558d93d6b98fb71d810d86a52449a *inst/doc/geomultistar.html
+057d2faddc40dbfa4620fa942aa06cb3 *inst/doc/geomultistar.html
 c8aa61978215a0cd0ceb2eaea4c62f2c *inst/figures/geomultistar.png
 c246249b5d420941f4293dec1d093418 *man/add_dimension.Rd
 69ac97f0f034477ea4bab54bf7d5eda8 *man/add_facts.Rd
@@ -101,7 +101,7 @@ ba4994443874d0aeb1f226a686422a4f *man/usa_counties.Rd
 6f3f259e4bbc2ea9d437a445000f74d8 *tests/testthat/test-add_dimension.R
 5c2e5db1cd5dde576ef86eca9ccdab7c *tests/testthat/test-add_facts.R
 06e8a1b93126915cfae342f10aace5fe *tests/testthat/test-define_geoattribute.R
-77b573aee79103f1542f4330af3720a8 *tests/testthat/test-dimensional_query_save.R
+26c7dcbe39c3f5369bf8fdd75b38bbe3 *tests/testthat/test-dimensional_query_save.R
 9d811073acb17cd9fa8a388f1fdd42c8 *tests/testthat/test-geomultistar.R
 4e5dd798a0db0a202e2755f77692dd1f *tests/testthat/test-get_empty_geoinstances.R
 d2c75347e900e6bf9b25da1c3be5208c *tests/testthat/test-multistar.R

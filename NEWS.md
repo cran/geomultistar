@@ -1,3 +1,6 @@
+# geomultistar 1.2.2
+* Fix test for new version of sf.
+
 # geomultistar 1.2.1
 * Fix select measure in facts.
 * Modify the cph field of the description.
